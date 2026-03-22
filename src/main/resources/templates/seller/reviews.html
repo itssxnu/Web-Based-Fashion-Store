@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Reviews | QC Vendor</title>
+    <link rel="stylesheet" th:href="@{/admin/layout.html}" />
+    <style th:replace="~{admin/layout :: style}"></style>
+</head>
+<body style="margin: 0; font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh;">
+
+    <!-- Sidebar -->
+    <aside th:replace="~{fragments/seller-sidebar :: sidebar(activePage='reviews')}"></aside>
+
+    <main class="main-content" style="flex: 1; padding: 2rem 3rem; display: flex; flex-direction: column; overflow-y: auto;">
+        <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+            <h1 style="font-size: 1.8rem; font-weight: 500; margin: 0; color: #0f172a;">Product Reviews</h1>
+        </div>
+        
+        <div th:if="${successMessage}" style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; border: 1px solid #10b981;" th:text="${successMessage}"></div>
+        <div th:if="${error}" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; border: 1px solid #ef4444;" th:text="${error}"></div>
+
+        <div th:if="${#lists.isEmpty(reviews)}">
+            <p style="color: #64748b; font-size: 1.1rem;">No reviews have been written for your products yet.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(reviews)}" style="display: flex; flex-direction: column; gap: 2rem;">
+            <div th:each="review : ${reviews}" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem;">
+                    <div>
+                        <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">
+                            <a th:href="@{/product/{id}(id=${review.product.id})}" style="color: #3b82f6; text-decoration: none;" th:text="${review.product.title}">Product Title</a>
+                        </h3>
+                        <div style="color: #f59e0b; font-size: 1rem;">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}" th:text="${i <= review.rating} ? '★' : '☆'">★</span>
+                        </div>
+                    </div>
+                    <div style="text-align: right; color: #64748b; font-size: 0.85rem;">
+                        <span th:text="${review.user.name}">Buyer Name</span><br>
+                        <span th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy, HH:mm')}">Date</span>
+                    </div>
+                </div>
+
+                <p style="margin: 0 0 1.5rem 0; color: #0f172a; font-size: 0.95rem; line-height: 1.5;" th:if="${review.comment != null and !review.comment.isEmpty()}" th:text="${review.comment}"></p>
+
+                <div th:if="${review.sellerReply != null}" style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-left: 3px solid #3b82f6; border-radius: 0.25rem;">
+                    <strong style="font-size: 0.85rem; color: #3b82f6; display: block; margin-bottom: 0.5rem;">Your Reply:</strong>
+                    <p style="margin: 0; font-size: 0.9rem; color: #0f172a;" th:text="${review.sellerReply}"></p>
+                    <span style="font-size: 0.75rem; color: #64748b; display: block; margin-top: 0.5rem;" th:text="${#temporals.format(review.sellerRepliedAt, 'dd MMM yyyy, HH:mm')}"></span>
+                </div>
+
+                <div th:if="${review.sellerReply == null}" style="margin-top: 1rem;">
+                    <form th:action="@{/seller/reviews/reply}" method="post" style="display: flex; gap: 1rem; align-items: flex-end;">
+                        <input type="hidden" name="reviewId" th:value="${review.id}">
+                        <div style="flex: 1;">
+                            <label style="display: block; font-size: 0.8rem; margin-bottom: 0.5rem; color: #64748b;">Reply to customer</label>
+                            <textarea name="reply" rows="2" required style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.25rem; background: #ffffff; color: #0f172a; resize: vertical; box-sizing: border-box;"></textarea>
+                        </div>
+                        <button type="submit" style="background: #3b82f6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.25rem; font-weight: 500; cursor: pointer;">Post Reply</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

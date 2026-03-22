@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<header th:fragment="header" class="site-header">
+    <div class="container header-container">
+        <a th:href="@{/}" class="logo">QC.</a>
+
+        <nav class="main-nav">
+            <a th:href="@{/}" class="nav-link">Home</a>
+            <a th:href="@{/shop}" class="nav-link">Shop</a>
+
+            <div class="category-dropdown" style="position: relative; display: inline-block;">
+                <style>
+                    .category-dropdown:hover .cat-menu {
+                        display: block;
+                    }
+
+                    .cat-menu {
+                        display: none;
+                        position: absolute;
+                        top: 100%;
+                        left: 0;
+                        background: white;
+                        border: 1px solid var(--border-color);
+                        border-radius: 0.5rem;
+                        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                        min-width: 180px;
+                        z-index: 50;
+                        padding: 0.5rem 0;
+                        margin-top: 0;
+                    }
+
+                    .category-dropdown::before {
+                        content: '';
+                        position: absolute;
+                        top: 100%;
+                        left: 0;
+                        width: 100%;
+                        height: 1.5rem;
+                    }
+
+                    .cat-menu a {
+                        display: block;
+                        padding: 0.75rem 1rem;
+                        color: var(--text-color);
+                        text-decoration: none;
+                        font-size: 0.85rem;
+                        font-weight: 500;
+                        transition: background 0.2s;
+                    }
+
+                    .cat-menu a:hover {
+                        background: #e2e8f0;
+                    }
+                </style>
+                <a th:href="@{/categories}" class="nav-link" style="display: flex; align-items: center; gap: 4px;">
+                    Shop by Category
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </a>
+                <div class="cat-menu">
+                    <a th:each="cat : ${globalCategories}" th:href="@{/category/{name}(name=${cat})}"
+                        th:text="${cat}">Category</a>
+                    <div style="border-top: 1px solid #e2e8f0; margin: 0.5rem 0;"></div>
+                    <a th:href="@{/categories}" style="color: var(--primary-color);">View All Categories &rarr;</a>
+                </div>
+            </div>
+
+            <a th:href="@{/about}" class="nav-link">About</a>
+        </nav>
+
+        <div class="header-actions">
+            
+            <button class="icon-btn search-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+
+            
+            <div sec:authorize="isAuthenticated()" class="user-profile-container" style="position: relative;">
+                <style>
+                    .user-profile-container .dropdown-menu {
+                        display: none;
+                        position: absolute;
+                        top: 100%;
+                        right: 0;
+                        background: white;
+                        border: 1px solid var(--border-color);
+                        border-radius: 0.5rem;
+                        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                        min-width: 150px;
+                        z-index: 50;
+                        padding: 0.5rem 0;
+                        margin-top: 0.5rem;
+                    }
+
+                    /* Invisible bridge so the mouse doesn't lose hover over the margin gap */
+                    .user-profile-container .dropdown-menu::before {
+                        content: '';
+                        position: absolute;
+                        top: -0.5rem;
+                        left: 0;
+                        width: 100%;
+                        height: 0.5rem;
+                    }
+
+                    .user-profile-container:hover .dropdown-menu {
+                        display: block;
+                    }
+
+                    .dropdown-menu a,
+                    .dropdown-menu button {
+                        display: block;
+                        width: 100%;
+                        text-align: left;
+                        padding: 0.75rem 1rem;
+                        color: var(--text-color);
+                        text-decoration: none;
+                        font-size: 0.85rem;
+                        font-weight: 500;
+                        background: transparent;
+                        border: none;
+                        cursor: pointer;
+                        transition: background 0.2s;
+                    }
+
+                    .dropdown-menu a:hover,
+                    .dropdown-menu button:hover {
+                        background: #e2e8f0;
+                        color: var(--text-color);
+                    }
+                </style>
+
+                <div
+                    style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-color); color: white; display: flex; justify-content: center; align-items: center; font-weight: 600; font-size: 0.9rem; cursor: pointer;">
+                    <span
+                        th:text="${currentUser != null ? #strings.substring(currentUser.name, 0, 1).toUpperCase() : 'U'}">U</span>
+                </div>
+
+                <div class="dropdown-menu">
+                    <a th:href="@{/user/profile}">My Profile</a>
+                    <a th:href="@{/user/orders}">My Orders</a>
+                    <form th:action="@{/logout}" method="post" style="margin: 0;">
+                        <button type="submit">Logout</button>
+                    </form>
+                </div>
+            </div>
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="icon-btn" title="Login">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </a>
+
+            
+            <a sec:authorize="isAuthenticated()" th:href="@{/wishlist}" class="icon-btn" title="Wishlist">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                    </path>
+                </svg>
+            </a>
+
+            
+            <a th:href="@{/cart}" class="icon-btn cart-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                <span class="cart-count" th:text="${cartCount != null ? cartCount : 0}">0</span>
+            </a>
+        </div>
+    </div>
+</header>
+
+</html>

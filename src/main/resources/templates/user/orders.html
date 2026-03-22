@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='My Orders')}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main style="max-width: 1200px; margin: 4rem auto; padding: 0 2rem; min-height: 60vh;">
+
+        <div
+            style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+            <div>
+                <h1 style="font-size: 2rem; font-weight: 300; margin: 0 0 0.5rem 0; color: var(--primary-color);">My
+                    Orders</h1>
+                <p style="margin: 0; color: var(--text-light);"></p>
+            </div>
+            <a th:href="@{/}" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">&larr;
+                Continue Shopping</a>
+        </div>
+
+        
+        <div th:if="${successMessage}"
+            style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #10b981; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem; text-align: center;"
+            th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}"
+            style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem; text-align: center;"
+            th:text="${errorMessage}"></div>
+
+        
+        <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;"
+            th:if="${not #lists.isEmpty(orders)}">
+            <input type="text" id="orderSearch" placeholder="Search by Order # or Product Title..."
+                style="flex: 1; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter', sans-serif;">
+            <select id="orderFilter"
+                style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter', sans-serif; cursor: pointer;">
+                <option value="ALL">All Statuses</option>
+                <option value="PROCESSING">Processing</option>
+                <option value="SHIPPED">Shipped</option>
+                <option value="DELIVERED">Delivered</option>
+                <option value="RETURN_REQUESTED">Return Requested</option>
+                <option value="REFUNDED">Refunded</option>
+            </select>
+        </div>
+
+        
+        <div th:if="${#lists.isEmpty(orders)}"
+            style="text-align: center; padding: 4rem 0; border: 1px dashed var(--border-color); border-radius: 0.5rem; color: var(--text-light);">
+            <svg style="width: 48px; height: 48px; margin: 0 auto 1rem auto; opacity: 0.5;" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            </svg>
+            <h3 style="font-size: 1.25rem; font-weight: 500; margin: 0 0 0.5rem 0; color: var(--text-color);">No Orders
+                Yet</h3>
+            <p style="margin: 0;">Looks like you haven't made any purchases.</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <div th:each="order : ${orders}" class="order-card"
+                style="border: 1px solid var(--border-color); border-radius: 0.5rem; overflow: hidden; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+
+                
+                <div
+                    style="background: #f8fafc; padding: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; gap: 3rem; flex-wrap: wrap;">
+                        <div>
+                            <div
+                                style="color: var(--text-light); text-transform: uppercase; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                                Order Placed</div>
+                            <div style="color: var(--text-color); font-weight: 500;"
+                                th:text="${#temporals.format(order.createdAt, 'MMMM dd, yyyy')}">Date</div>
+                        </div>
+                        <div>
+                            <div
+                                style="color: var(--text-light); text-transform: uppercase; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                                Total Amount</div>
+                            <div style="color: var(--primary-color); font-weight: 600;"
+                                th:text="${'LKR ' + #numbers.formatDecimal(order.totalAmount, 1, 'COMMA', 2, 'POINT')}">
+                                LKR 0.00</div>
+                        </div>
+                        <div>
+                            <div
+                                style="color: var(--text-light); text-transform: uppercase; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                                Ship To</div>
+                            <div style="color: var(--text-color); font-size: 0.9rem;" th:text="${order.user.name}">Name
+                            </div>
+                        </div>
+                        <div>
+                            <div
+                                style="color: var(--text-light); text-transform: uppercase; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                                Order #</div>
+                            <div style="color: var(--text-color); font-family: monospace;" th:text="${order.id}">123456
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <a th:href="@{/user/orders/{id}/invoice(id=${order.id})}" target="_blank"
+                            style="color: var(--primary-color); text-decoration: none; font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 0.25rem;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Invoice
+                        </a>
+
+                        <form th:action="@{/user/orders/{id}/reorder(id=${order.id})}" method="post" style="margin: 0;">
+                            <button type="submit"
+                                style="padding: 0.5rem 1rem; background: var(--primary-color); color: white; border: none; border-radius: 4px; font-weight: 500; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; white-space: nowrap;"
+                                onmouseover="this.style.backgroundColor='#0f172a'"
+                                onmouseout="this.style.backgroundColor='var(--primary-color)'">
+                                Buy Again
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                
+                <div style="padding: 1.5rem;">
+                    <div th:each="item, stat : ${order.items}"
+                        th:style="${!stat.last ? 'margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9;' : ''}">
+
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                            
+                            <div>
+                                <h3 class="item-status"
+                                    style="margin: 0 0 0.5rem 0; font-size: 1.1rem; font-weight: 600; color: var(--primary-color);"
+                                    th:text="${item.status.name()}">PROCESSING</h3>
+                                <div th:if="${item.status.name() == 'SHIPPED'}"
+                                    style="color: #10b981; font-size: 0.85rem;">Your item is on the way!</div>
+                                <div th:if="${item.status.name() == 'DELIVERED'}"
+                                    style="color: #10b981; font-size: 0.85rem;">Package has been delivered.</div>
+                            </div>
+
+                            
+                            <div style="display: flex; gap: 0.5rem;">
+                                
+                                <a th:if="${item.productVariant.product.seller != null}"
+                                    th:href="@{/messages/{id}(id=${item.productVariant.product.seller.id})}"
+                                    style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 0.375rem; background: white; color: var(--text-color); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: background 0.2s;"
+                                    onmouseover="this.style.backgroundColor='#f8fafc'"
+                                    onmouseout="this.style.backgroundColor='white'">
+                                    Contact Seller
+                                </a>
+
+                                <!-- Report Seller Button -->
+                                <button th:if="${item.productVariant.product.seller != null}" 
+                                    type="button"
+                                    th:onclick="'document.getElementById(\'reportModal-' + ${item.id} + '\').style.display=\'flex\''"
+                                    style="padding: 0.5rem 1rem; border: 1px solid #f59e0b; border-radius: 0.375rem; background: white; color: #f59e0b; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: background 0.2s;"
+                                    onmouseover="this.style.backgroundColor='#fef3c7'"
+                                    onmouseout="this.style.backgroundColor='white'">
+                                    Report Seller
+                                </button>
+
+                                
+                                <form th:if="${item.status.name() == 'DELIVERED'}"
+                                    th:action="@{/user/orders/items/{id}/return(id=${item.id})}" method="post">
+                                    <button type="submit"
+                                        style="padding: 0.5rem 1rem; border: 1px solid #ef4444; border-radius: 0.375rem; background: white; color: #ef4444; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: background 0.2s;"
+                                        onmouseover="this.style.backgroundColor='#fef2f2'"
+                                        onmouseout="this.style.backgroundColor='white'">
+                                        Return Item
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Report Modal -->
+                        <div th:if="${item.productVariant.product.seller != null}" 
+                                th:id="'reportModal-' + ${item.id}" 
+                                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000;">
+                            <div style="background: white; padding: 2rem; border-radius: 0.5rem; width: 400px; max-width: 90%; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                    <h3 style="margin: 0; font-size: 1.25rem;">Report Seller</h3>
+                                    <button type="button" th:onclick="'document.getElementById(\'reportModal-' + ${item.id} + '\').style.display=\'none\''" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light);">&times;</button>
+                                </div>
+                                <form th:action="@{/report/seller}" method="post" style="display: flex; flex-direction: column; gap: 1rem;">
+                                    <input type="hidden" name="sellerId" th:value="${item.productVariant.product.seller.id}">
+                                    <input type="hidden" name="orderId" th:value="${order.id}">
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Reason</label>
+                                        <select name="reason" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                                            <option value="Fraudulent Listing">Fraudulent Listing</option>
+                                            <option value="Defective Item">Defective or Broken Item</option>
+                                            <option value="Poor Communication">Poor Communication</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Description</label>
+                                        <textarea name="description" rows="4" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; resize: vertical; box-sizing: border-box;"></textarea>
+                                    </div>
+                                    <button type="submit" style="background: var(--primary-color); color: white; border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 1rem;">Submit Report</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        
+                        <div style="display: flex; gap: 1.5rem;">
+                            
+                            <div
+                                style="width: 100px; height: 120px; flex-shrink: 0; background: #f8fafc; border-radius: 0.25rem; overflow: hidden;">
+                                <img th:if="${item.productVariant.product.mainImageUrl}"
+                                    th:src="${item.productVariant.product.mainImageUrl}"
+                                    style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+
+                            
+                            <div style="flex: 1;">
+                                <a th:href="@{/product/{id}(id=${item.productVariant.product.id})}"
+                                    style="font-size: 1.1rem; font-weight: 500; color: var(--primary-color); text-decoration: none;"
+                                    th:text="${item.productVariant.product.title}">Product Title</a>
+
+                                <div style="color: var(--text-light); font-size: 0.9rem; margin-top: 0.5rem;"
+                                    th:text="${item.productVariant.size + ' | ' + item.productVariant.color}">Size |
+                                    Color</div>
+
+                                <div style="color: var(--text-color); font-size: 0.9rem; margin-top: 0.25rem;">
+                                    Sold by: <span
+                                        th:text="${item.productVariant.product.seller != null ? item.productVariant.product.seller.name : 'QC Official'}"
+                                        style="font-weight: 500;">QC</span>
+                                </div>
+
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                                    <div style="font-weight: 600; color: var(--text-color);"
+                                        th:text="${'LKR ' + item.priceAtTimeOfPurchase}">LKR 0.00</div>
+                                    <div style="color: var(--text-light); font-size: 0.9rem;"
+                                        th:text="${'Qty: ' + item.quantity}">Qty: 1</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("orderSearch");
+            const filterSelect = document.getElementById("orderFilter");
+            const orderCards = document.querySelectorAll(".order-card");
+
+            function filterOrders() {
+                if (!searchInput || !filterSelect) return;
+                const searchTerm = searchInput.value.toLowerCase();
+                const filterTerm = filterSelect.value.toUpperCase();
+
+                orderCards.forEach(card => {
+                    const textContent = card.innerText.toLowerCase();
+                    const statusElements = card.querySelectorAll(".item-status");
+                    let hasMatchingStatus = false;
+
+                    if (filterTerm === "ALL") {
+                        hasMatchingStatus = true;
+                    } else {
+                        statusElements.forEach(el => {
+                            if (el.innerText.trim().toUpperCase() === filterTerm) {
+                                hasMatchingStatus = true;
+                            }
+                        });
+                    }
+
+                    if (textContent.includes(searchTerm) && hasMatchingStatus) {
+                        card.style.display = "block";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            }
+
+            if (searchInput) searchInput.addEventListener("keyup", filterOrders);
+            if (filterSelect) filterSelect.addEventListener("change", filterOrders);
+        });
+    </script>
+</body>
+
+</html>

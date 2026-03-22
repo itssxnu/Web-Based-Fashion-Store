@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='Home')}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main>
+        
+        <section class="hero">
+            <div class="hero-content" style="max-width: 600px; animation: fadeIn 1s ease-out;">
+                <h1 style="font-size: 3.5rem; font-weight: 300; margin-bottom: 20px; line-height: 1.1;">The New Standard
+                    in Minimal Wear.</h1>
+                <p style="color: var(--text-light); margin-bottom: 40px; font-size: 1.1rem;">Discover our latest
+                    collection of premium, sustainably sourced essentials designed for the modern wardrobe.</p>
+                <a th:href="@{/shop}" class="btn primary-btn"
+                    style="padding: 15px 40px; background: var(--primary-color); color: white; display: inline-block; font-weight: 500; letter-spacing: 1px; transition: var(--transition);">EXPLORE
+                    COLLECTION</a>
+            </div>
+        </section>
+
+        
+        <section th:if="${recentlyExplored != null and !recentlyExplored.isEmpty()}" class="recently-explored"
+            style="padding: 100px 0 0 0;">
+            <div class="container">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
+                    <h2 style="font-size: 2rem; font-weight: 400;">Recently Explored</h2>
+                </div>
+
+                <div class="product-grid"
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 40px;">
+                    <div th:each="product : ${recentlyExplored}" class="product-card"
+                        style="background: white; border: 1px solid var(--border-color); padding: 10px; border-radius: 0.5rem; overflow: hidden; transition: transform 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                        <a th:href="@{/product/{id}(id=${product.id})}"
+                            style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-image-wrapper"
+                                style="position: relative; overflow: hidden; background: var(--secondary-color); padding-top: 130%; margin-bottom: 20px; border-radius: 4px;">
+
+                                <img th:if="${product.mainImageUrl}" th:src="${product.mainImageUrl}"
+                                    alt="Product Image"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" />
+
+                                
+                                <div th:unless="${product.mainImageUrl}"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-light); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                                    [[${product.category}]]
+                                </div>
+                            </div>
+                            <div class="product-info"
+                                style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <h3 style="font-size: 1rem; font-weight: 500; margin-bottom: 5px; color: var(--primary-color);"
+                                        th:text="${product.title}">Title</h3>
+                                    <p style="color: var(--text-light); font-size: 0.85rem;"
+                                        th:text="${product.category}">Category</p>
+                                </div>
+                                <span class="price" style="font-weight: 500;"
+                                    th:text="${'LKR ' + product.basePrice}">LKR 0.00</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+        <section class="featured" style="padding: 100px 0;">
+            <div class="container">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px;">
+                    <h2 style="font-size: 2rem; font-weight: 400;">New Arrivals</h2>
+                    <a th:href="@{/shop}"
+                        style="font-size: 0.9rem; border-bottom: 1px solid var(--primary-color); padding-bottom: 2px;">View
+                        All</a>
+                </div>
+
+                <div class="product-grid"
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 40px;">
+
+                    
+                    <div th:each="product : ${products}" class="product-card"
+                        style="background: white; border: 1px solid var(--border-color); padding: 10px; border-radius: 0.5rem; overflow: hidden; transition: transform 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                        <a th:href="@{/product/{id}(id=${product.id})}"
+                            style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-image-wrapper"
+                                style="position: relative; overflow: hidden; background: var(--secondary-color); padding-top: 130%; margin-bottom: 20px; border-radius: 4px;">
+
+                                <img th:if="${product.mainImageUrl}" th:src="${product.mainImageUrl}"
+                                    alt="Product Image"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" />
+
+                                
+                                <div th:unless="${product.mainImageUrl}"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-light); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+                                    [[${product.category}]]
+                                </div>
+                            </div>
+                            <div class="product-info"
+                                style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <h3 style="font-size: 1rem; font-weight: 500; margin-bottom: 5px; color: var(--primary-color);"
+                                        th:text="${product.title}">Title</h3>
+                                    <p style="color: var(--text-light); font-size: 0.85rem;"
+                                        th:text="${product.category}">Category</p>
+                                </div>
+                                <span class="price" style="font-weight: 500;"
+                                    th:text="${'LKR ' + product.basePrice}">LKR 0.00</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    
+                    <div th:if="${#lists.isEmpty(products)}"
+                        style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-light);">
+                        No new arrivals to show yet. Check back soon!
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>

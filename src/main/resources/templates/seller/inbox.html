@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Inbox | QC Vendor</title>
+    
+    <link rel="stylesheet" th:href="@{/admin/layout.html}" />
+    <style th:replace="~{admin/layout :: style}"></style>
+</head>
+
+<body
+    style="margin: 0; font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh;">
+
+    
+    <aside th:replace="~{fragments/seller-sidebar :: sidebar(activePage='messages')}"></aside>
+
+    <main class="main-content"
+        style="flex: 1; padding: 2rem 3rem; display: flex; flex-direction: column; overflow-y: hidden;">
+
+        <div class="header-top"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+            <h1 style="font-size: 1.8rem; font-weight: 500; margin: 0; color: #0f172a;">Inbox</h1>
+        </div>
+
+        <div style="display: flex; gap: 2rem; flex: 1; min-height: 500px; max-height: calc(100vh - 150px);">
+
+            
+            <div
+                style="width: 320px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.5rem; overflow: hidden; display: flex; flex-direction: column;">
+                <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; background-color: #f8fafc;">
+                    <h2 style="margin: 0; font-size: 1.1rem; font-weight: 500; color: #0f172a;">Conversations</h2>
+                </div>
+
+                <div style="flex: 1; overflow-y: auto;">
+                    <a th:each="user : ${conversations}" th:href="@{/seller/messages/{id}(id=${user.id})}"
+                        style="display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(0, 0, 0,0.05); text-decoration: none; transition: background 0.2s; color: inherit; position: relative;"
+                        onmouseover="this.style.backgroundColor='#e2e8f0'"
+                        onmouseout="this.style.backgroundColor='transparent'">
+
+                        <div
+                            style="width: 40px; height: 40px; border-radius: 50%; background: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">
+                            <span th:text="${#strings.substring(user.name, 0, 1).toUpperCase()}">U</span>
+                        </div>
+                        <div style="flex: 1; overflow: hidden;">
+                            <div style="font-weight: 500; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                th:text="${user.name}">User Name</div>
+                            <div style="font-size: 0.8rem; color: #10b981; margin-top: 0.2rem;"
+                                th:if="${user.role.name() == 'SELLER'}">Seller</div>
+                            <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.2rem;"
+                                th:if="${user.role.name() == 'USER'}">Customer</div>
+                        </div>
+                    </a>
+
+                    <div th:if="${#lists.isEmpty(conversations)}"
+                        style="padding: 2rem; text-align: center; color: #64748b; font-size: 0.9rem;">
+                        No recent conversations.
+                    </div>
+                </div>
+            </div>
+
+            
+            <section
+                style="flex: 1; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b;">
+                <svg style="width: 64px; height: 64px; margin-bottom: 1rem; color: #334155;" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                    </path>
+                </svg>
+                <h3 style="font-size: 1.25rem; font-weight: 500; color: #0f172a; margin: 0 0 0.5rem 0;">Your Inbox
+                </h3>
+                <p style="margin: 0; font-size: 0.9rem;">Select a conversation to start messaging.</p>
+            </section>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

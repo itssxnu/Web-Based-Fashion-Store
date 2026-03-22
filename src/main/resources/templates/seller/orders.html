@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Manage Orders | QC Vendor</title>
+    <link rel="stylesheet" th:href="@{/admin/layout.html}" />
+    <style th:replace="~{admin/layout :: style}"></style>
+</head>
+
+<body
+    style="margin: 0; font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh;">
+
+    
+    <aside th:replace="~{fragments/seller-sidebar :: sidebar(activePage='orders')}"></aside>
+
+    <main class="main-content"
+        style="flex: 1; padding: 2rem 3rem; display: flex; flex-direction: column; overflow-y: auto;">
+
+        <div class="header-top"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+            <h1 style="font-size: 1.8rem; font-weight: 500; margin: 0; color: #0f172a;">Manage Orders</h1>
+            <div style="color: #64748b; font-size: 0.9rem;">Welcome back, <span
+                    th:text="${currentUser.name}">Seller</span></div>
+        </div>
+
+        
+        <div th:if="${successMessage}"
+            style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #10b981; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem;"
+            th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}"
+            style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem;"
+            th:text="${errorMessage}"></div>
+
+        <div style="background-color: #ffffff; border-radius: 0.5rem; border: 1px solid #e2e8f0; overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th
+                            style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                            Time</th>
+                        <th
+                            style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                            Buyer</th>
+                        <th
+                            style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                            Item</th>
+                        <th
+                            style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                            Amount</th>
+                        <th
+                            style="padding: 1rem; text-align: center; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                            Status</th>
+                        <th
+                            style="padding: 1rem; text-align: center; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                            Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${orderItems}">
+                        
+                        <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-size: 0.85rem;"
+                            th:text="${#temporals.format(item.order.createdAt, 'dd MMM, HH:mm')}">Time</td>
+
+                        
+                        <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-size: 0.85rem;">
+                            <div th:text="${item.order.user.name}">Buyer Name</div>
+                            <a th:href="@{/messages/{id}(id=${item.order.user.id})}"
+                                style="color: #3b82f6; text-decoration: none; font-size: 0.75rem; display: inline-block; margin-top: 0.25rem;">Chat
+                                with Buyer</a>
+                        </td>
+
+                        
+                        <td
+                            style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #64748b; font-size: 0.85rem;">
+                            <div style="color: #0f172a; margin-bottom: 0.2rem;"
+                                th:text="${item.productVariant.product.title}">Product</div>
+                            <div
+                                th:text="${item.productVariant.size + ' | ' + item.productVariant.color + ' (Qty: ' + item.quantity + ')'}">
+                                Variant (Qty: 1)</div>
+                        </td>
+
+                        
+                        <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #10b981; font-weight: 500; font-size: 0.85rem;"
+                            th:text="${'LKR ' + (item.priceAtTimeOfPurchase * item.quantity)}">Amount</td>
+
+                        
+                        <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; text-align: center;">
+                            <span th:text="${item.status.name()}"
+                                th:style="${item.status.name() == 'PENDING' ? 'background: rgba(245, 158, 11, 0.1); color: #f59e0b; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;' : 
+                                             item.status.name() == 'SHIPPED' ? 'background: rgba(59, 130, 246, 0.1); color: #3b82f6; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;' :
+                                             item.status.name() == 'DELIVERED' ? 'background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;' :
+                                             item.status.name() == 'RETURN_REQUESTED' ? 'background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;' :
+                                             'background: rgba(148, 163, 184, 0.1); color: #64748b; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;'}">
+                                STATUS
+                            </span>
+                        </td>
+
+                        
+                        <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; text-align: center;">
+
+                            
+                            <form th:if="${item.status.name() == 'PENDING' || item.status.name() == 'PROCESSING'}"
+                                th:action="@{/seller/orders/{id}/status(id=${item.id})}" method="post"
+                                style="display: inline-block;">
+                                <input type="hidden" name="status" value="SHIPPED">
+                                <button type="submit"
+                                    style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid #3b82f6; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Ship
+                                    Item</button>
+                            </form>
+
+                            
+                            <form th:if="${item.status.name() == 'SHIPPED'}"
+                                th:action="@{/seller/orders/{id}/status(id=${item.id})}" method="post"
+                                style="display: inline-block;">
+                                <input type="hidden" name="status" value="DELIVERED">
+                                <button type="submit"
+                                    style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Mark
+                                    Delivered</button>
+                            </form>
+
+                            
+                            <form th:if="${item.status.name() == 'RETURN_REQUESTED'}"
+                                th:action="@{/seller/orders/{id}/refund(id=${item.id})}" method="post"
+                                style="display: inline-block;">
+                                <button type="submit"
+                                    style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Issue
+                                    Refund</button>
+                            </form>
+
+                            <span th:if="${item.status.name() == 'REFUNDED'}"
+                                style="color: #64748b; font-size: 0.75rem; font-style: italic;">Refund Complete</span>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(orderItems)}">
+                        <td colspan="6" style="padding: 2rem; text-align: center; color: #64748b; font-size: 0.85rem;">
+                            No orders found.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='Secured Checkout')}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main style="max-width: 1200px; margin: 4rem auto; padding: 0 2rem;">
+
+        <div th:if="${error}"
+            style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem; text-align: center;"
+            th:text="${error}"></div>
+
+        <div style="display: flex; gap: 4rem; flex-wrap: wrap;">
+
+            
+            <div style="flex: 2; min-width: 300px;">
+                <form th:action="@{/checkout/process}" method="post"
+                    style="background: white; padding: 2rem; border-radius: 0.5rem; border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+
+                    <h2
+                        style="font-size: 1.25rem; margin: 0 0 1.5rem 0; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); color: var(--primary-color);">
+                        1. Shipping Information</h2>
+                    <div style="margin-bottom: 2rem;">
+                        <label
+                            style="display: block; color: var(--text-light); font-size: 0.875rem; margin-bottom: 0.5rem;">Full
+                            Delivery Address</label>
+                        <textarea name="shippingAddress" required rows="3"
+                            placeholder="123 Example St, City, Country, Zip"
+                            style="width: 100%; padding: 0.75rem; border-radius: 0.375rem; border: 1px solid var(--border-color); background: white; color: var(--text-color); box-sizing: border-box; resize: vertical;"></textarea>
+                    </div>
+
+                    <h2
+                        style="font-size: 1.25rem; margin: 0 0 1.5rem 0; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; color: var(--primary-color);">
+                        2. Payment Details
+                    </h2>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label
+                            style="display: block; color: var(--text-light); font-size: 0.875rem; margin-bottom: 0.5rem;">Card
+                            Number</label>
+                        <input type="text" name="cardNumber" required placeholder="0000 0000 0000 0000" maxlength="19"
+                            pattern="[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}"
+                            title="Please enter a valid 16-digit card number"
+                            style="width: 100%; padding: 0.75rem; border-radius: 0.375rem; border: 1px solid var(--border-color); background: white; color: var(--text-color); box-sizing: border-box;">
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                        <div style="flex: 1;">
+                            <label
+                                style="display: block; color: var(--text-light); font-size: 0.875rem; margin-bottom: 0.5rem;">Expiry
+                                Date</label>
+                            <input type="text" name="expiry" required placeholder="MM/YY" maxlength="5"
+                                pattern="(0[1-9]|1[0-2])\/\d{2}" title="Please enter a valid expiry date MM/YY"
+                                style="width: 100%; padding: 0.75rem; border-radius: 0.375rem; border: 1px solid var(--border-color); background: white; color: var(--text-color); box-sizing: border-box;">
+                        </div>
+                        <div style="flex: 1;">
+                            <label
+                                style="display: block; color: var(--text-light); font-size: 0.875rem; margin-bottom: 0.5rem;">CVV</label>
+                            <input type="text" name="cvv" required placeholder="123" maxlength="3" pattern="\d{3}"
+                                title="Please enter a 3-digit CVV"
+                                style="width: 100%; padding: 0.75rem; border-radius: 0.375rem; border: 1px solid var(--border-color); background: white; color: var(--text-color); box-sizing: border-box;">
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        style="width: 100%; background: var(--primary-color); color: white; border: none; padding: 1rem; font-weight: 600; font-size: 1rem; border-radius: 0.375rem; cursor: pointer; transition: background 0.2s;">
+                        PLACE ORDER - LKR <span th:text="${totalAmount}"></span>
+                    </button>
+                    <p style="text-align: center; color: var(--text-light); font-size: 0.75rem; margin-top: 1rem;">
+                        🔒 Payments are processed securely. This is a simulated environment.
+                    </p>
+                </form>
+            </div>
+
+            
+            <div style="flex: 1; min-width: 300px;">
+                <div
+                    style="background: var(--secondary-color); padding: 2rem; border-radius: 0.5rem; border: 1px solid var(--border-color); position: sticky; top: 100px;">
+                    <h2
+                        style="font-size: 1.25rem; margin: 0 0 1.5rem 0; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); color: var(--primary-color);">
+                        In Your Cart</h2>
+
+                    <div style="max-height: 300px; overflow-y: auto; margin-bottom: 1.5rem; padding-right: 0.5rem;">
+                        <div th:each="item : ${cart.items}" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <img th:if="${item.productVariant.product.mainImageUrl}"
+                                th:src="${item.productVariant.product.mainImageUrl}"
+                                style="width: 50px; height: 60px; object-fit: cover; border-radius: 0.25rem;">
+                            <div style="flex: 1; font-size: 0.85rem;">
+                                <div th:text="${item.productVariant.product.title}"
+                                    style="font-weight: 500; color: var(--primary-color);">Product
+                                </div>
+                                <div style="color: var(--text-light);"
+                                    th:text="${item.productVariant.size + ' | ' + item.productVariant.color}">Variant
+                                </div>
+                                <div style="color: var(--text-light);" th:text="${'Qty: ' + item.quantity}">Qty: 1</div>
+                            </div>
+                            <div style="font-weight: 500; font-size: 0.85rem; color: var(--primary-color);"
+                                th:text="${'LKR ' + ((item.productVariant.product.basePrice + (item.productVariant.priceModifier != null ? item.productVariant.priceModifier : 0.0)) * item.quantity)}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--text-color); font-size: 0.9rem;">
+                            <span>Subtotal</span>
+                            <span th:text="${'LKR ' + subtotal}">LKR 0.00</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 1rem; color: var(--text-color); font-size: 0.9rem;">
+                            <span>Delivery</span>
+                            <span th:text="${deliveryCharge == 0.0 ? 'Free' : 'LKR ' + deliveryCharge}">LKR
+                                350.00</span>
+                        </div>
+
+                        <div
+                            style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 1.25rem; font-weight: 700; color: var(--primary-color);">
+                            <span>Total</span>
+                            <span th:text="${'LKR ' + totalAmount}">LKR 0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cardInput = document.querySelector('input[name="cardNumber"]');
+            const expiryInput = document.querySelector('input[name="expiry"]');
+
+            if (cardInput) {
+                // To allow spacing, the maxlength should be adjusted from 16 to 19 to hold the spaces
+                cardInput.setAttribute('maxlength', '19');
+                cardInput.addEventListener('input', function (e) {
+                    let value = e.target.value.replace(/\D/g, ''); // Remove all non-digits
+                    let formattedValue = '';
+
+                    for (let i = 0; i < value.length; i++) {
+                        if (i > 0 && i % 4 === 0) {
+                            formattedValue += ' ';
+                        }
+                        formattedValue += value[i];
+                    }
+                    e.target.value = formattedValue;
+                });
+            }
+
+            if (expiryInput) {
+                expiryInput.addEventListener('input', function (e) {
+                    let value = e.target.value.replace(/\D/g, ''); // Remove all non-digits
+
+                    if (value.length > 2) {
+                        e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                    } else {
+                        e.target.value = value;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

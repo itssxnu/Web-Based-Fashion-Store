@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Seller Reports | QC Admin</title>
+    <link rel="stylesheet" th:href="@{/admin/layout.html}" />
+    <style th:replace="~{admin/layout :: style}"></style>
+</head>
+<body style="margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); display: flex; min-height: 100vh;">
+
+    <aside th:replace="~{admin/layout :: sidebar(activePage='reports')}"></aside>
+
+    <main class="main-content">
+        <div class="header-top">
+            <h1 style="font-size: 1.8rem; font-weight: 500; margin: 0; color: #0f172a;">Seller Reports</h1>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <div th:if="${#lists.isEmpty(reports)}">
+            <p style="color: var(--text-muted);">No reports have been submitted against any seller.</p>
+        </div>
+
+        <table th:unless="${#lists.isEmpty(reports)}">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Reporter</th>
+                    <th>Reported Seller</th>
+                    <th>Order #</th>
+                    <th>Reason</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="report : ${reports}">
+                    <td th:text="${#temporals.format(report.createdAt, 'dd MMM yyyy')}">Date</td>
+                    <td th:text="${report.reporter.name}">Reporter</td>
+                    <td th:text="${report.reportedSeller.name}">Seller</td>
+                    <td th:text="${report.orderId}">Ord #</td>
+                    <td th:text="${report.reason}">Reason</td>
+                    <td style="max-width: 250px; word-wrap: break-word;" th:text="${report.description}">Desc</td>
+                    <td>
+                        <span th:text="${report.status}"
+                              th:style="${report.status == 'PENDING' ? 'color: #f59e0b; font-weight: bold;' : 'color: #10b981; font-weight: bold;'}">
+                            STATUS
+                        </span>
+                    </td>
+                    <td>
+                        <form th:if="${report.status == 'PENDING'}" th:action="@{/admin/reports/resolve}" method="post" style="margin: 0;">
+                            <input type="hidden" name="reportId" th:value="${report.id}" />
+                            <button type="submit" class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Mark Resolved</button>
+                        </form>
+                        <span th:if="${report.status == 'RESOLVED'}" style="color: var(--text-muted); font-size: 0.8rem;">Resolved</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+</body>
+</html>

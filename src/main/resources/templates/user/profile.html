@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='My Profile')}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main style="padding: 60px 0; background-color: var(--bg-light);">
+        <div class="container"
+            style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+
+            <div th:if="${success}" class="alert alert-success" style="color: green; margin-bottom: 20px;"
+                th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger" style="color: red; margin-bottom: 20px;"
+                th:text="${error}"></div>
+
+            <div
+                style="display: flex; align-items: center; gap: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; margin-bottom: 30px;">
+                <div
+                    style="width: 80px; height: 80px; border-radius: 50%; background: var(--primary-color); color: white; display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: 600;">
+                    <span th:text="${#strings.substring(user.name, 0, 1).toUpperCase()}">U</span>
+                </div>
+                <div>
+                    <h1 style="font-size: 1.8rem; font-weight: 300; margin-bottom: 5px;" th:text="${user.name}">User
+                        Name</h1>
+                    <p style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 0;" th:text="${user.email}">
+                        user@email.com</p>
+                    <span
+                        style="display: inline-block; padding: 3px 10px; background: #e2e8f0; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-top: 10px; color: var(--text-dark);"
+                        th:text="${user.role}">ROLE_USER</span>
+                    <span th:if="${user.provider.name() != 'LOCAL'}"
+                        style="display: inline-block; padding: 3px 10px; background: #E8F0FE; color: #1967D2; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-top: 10px; margin-left: 5px;">
+                        Joined via <span th:text="${user.provider}">GOOGLE</span>
+                    </span>
+                </div>
+            </div>
+
+            <div th:if="${user.role.name() == 'USER'}"
+                style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 25px; border-radius: 8px; text-align: center;">
+                <h3 style="margin-bottom: 10px; font-size: 1.2rem; font-weight: 600; color: var(--text-dark);">Start
+                    selling with QC.</h3>
+                <p style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 20px;">Upgrade your account to a
+                    Supplier account to access the Seller Dashboard, manage inventory, and launch your own biddings.</p>
+
+                <form th:action="@{/user/profile/upgrade}" method="post">
+                    <button type="submit" class="btn"
+                        style="background: var(--primary-color); color: white; border: none; padding: 12px 25px; font-weight: 500; border-radius: 4px; cursor: pointer; transition: 0.2s; width: 100%;">
+                        Upgrade to Seller Account
+                    </button>
+                </form>
+            </div>
+
+            <div th:if="${user.role.name() == 'SELLER'}" style="text-align: center; padding: 20px;">
+                <p style="color: var(--text-light); margin-bottom: 15px;">You are currently registered as an active
+                    supplier.</p>
+                <a th:href="@{/seller/dashboard}"
+                    style="color: var(--primary-color); text-decoration: underline; font-weight: 500;">Go to Seller
+                    Dashboard &rarr;</a>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <a th:href="@{/user/orders}"
+                    style="display: block; padding: 15px 0; border-top: 1px solid var(--border-color); color: var(--text-dark); text-decoration: none; font-weight: 500; display: flex; justify-content: space-between;">
+                    View Order History <span>&rarr;</span>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='Shop by Category | QuickCart')}"></head>
+
+<body>
+    
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main style="padding: 100px 0; background-color: #f8fafc; min-height: 60vh;">
+        <div class="container">
+
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h1 style="font-size: 2.5rem; font-weight: 500; color: var(--text-color); margin-bottom: 10px;">Shop by
+                    Category</h1>
+                <p style="color: var(--text-light); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Explore our
+                    curated collections. Whether you're looking for everyday essentials or standout pieces, start your
+                    journey here.</p>
+            </div>
+
+            
+            <div th:if="${#lists.isEmpty(categories)}"
+                style="text-align: center; padding: 60px 0; background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                <h2 style="color: var(--text-color); margin-bottom: 15px;">New Collections Coming Soon</h2>
+                <p style="color: var(--text-light);">We're currently updating our catalog. Please check back later!</p>
+                <a th:href="@{/shop}" class="btn primary-btn" style="margin-top: 20px; display: inline-block;">View All
+                    Products</a>
+            </div>
+
+            
+            <div class="category-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">
+
+                <a th:each="cat : ${categories}" th:href="@{/category/{name}(name=${cat.name})}"
+                    style="text-decoration: none; color: inherit; display: block; background: white; border-radius: 12px; padding: 30px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: transform 0.3s ease, box-shadow 0.3s ease;"
+                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.05)';">
+
+                    <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <div
+                            style="width: 80px; height: 80px; background: rgba(79, 70, 229, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
+                                fill="none" stroke="var(--primary-color)" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 style="font-size: 1.5rem; font-weight: 500; margin: 0 0 10px 0; color: var(--text-color);"
+                            th:text="${cat.name}">Category Name</h3>
+                        <p style="color: var(--text-light); font-size: 0.95rem; margin: 0; line-height: 1.5;"
+                            th:text="${cat.description != null ? cat.description : 'Explore the ' + cat.name + ' collection'}">
+                            Description text goes here.</p>
+
+                        <span
+                            style="display: flex; align-items: center; gap: 5px; color: var(--primary-color); font-weight: 500; font-size: 0.9rem; margin-top: 20px;">
+                            Explore Collection
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+
+                </a>
+
+            </div>
+
+        </div>
+    </main>
+
+    
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>

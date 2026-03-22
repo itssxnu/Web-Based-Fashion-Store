@@ -1,0 +1,200 @@
+<div th:fragment="chatbot">
+    <div id="ai-chatbot-widget"
+        style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: 'Inter', sans-serif;">
+        
+        <button id="chatbot-toggle-btn"
+            style="width: 60px; height: 60px; border-radius: 50%; background-color: #4f46e5; color: white; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+        </button>
+
+        
+        <div id="chatbot-window"
+            style="display: none; position: absolute; bottom: 80px; right: 0; width: 350px; height: 500px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0; transform: scale(0); transform-origin: bottom right; transition: transform 0.3s ease;">
+
+            
+            <div
+                style="background: linear-gradient(135deg, #4f46e5, #3b82f6); color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div
+                        style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);">
+                    </div>
+                    <h3 style="margin: 0; font-size: 1.1rem; font-weight: 500;">QC Assistant</h3>
+                </div>
+                <button id="chatbot-close-btn"
+                    style="background: none; border: none; color: white; cursor: pointer; padding: 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            
+            <div id="chatbot-messages"
+                style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f8fafc;">
+                
+                <div
+                    style="align-self: flex-start; background: white; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 12px; border-bottom-left-radius: 2px; max-width: 85%; font-size: 0.9rem; color: #334155; line-height: 1.4;">
+                    Hi there! 👋 I'm the QuickCart Assistant. I can help you find products, answer questions about our
+                    store, or check our current inventory. How can I help you today?
+                </div>
+            </div>
+
+            
+            <form id="chatbot-form"
+                style="padding: 15px; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
+                <input type="text" id="chatbot-input" placeholder="Type a message..." required autocomplete="off"
+                    style="flex: 1; padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 20px; outline: none; font-family: 'Inter', sans-serif; font-size: 0.9rem;">
+                <button type="submit"
+                    style="background: #4f46e5; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('chatbot-toggle-btn');
+            const closeBtn = document.getElementById('chatbot-close-btn');
+            const windowEl = document.getElementById('chatbot-window');
+            const form = document.getElementById('chatbot-form');
+            const input = document.getElementById('chatbot-input');
+            const messagesContainer = document.getElementById('chatbot-messages');
+
+            let conversationHistory = []; // Tracks contextual history sequence
+            let isOpen = false;
+
+            const toggleChat = () => {
+                isOpen = !isOpen;
+                if (isOpen) {
+                    windowEl.style.display = 'flex';
+                    setTimeout(() => windowEl.style.transform = 'scale(1)', 10);
+                    toggleBtn.style.transform = 'scale(0)';
+                } else {
+                    windowEl.style.transform = 'scale(0)';
+                    setTimeout(() => windowEl.style.display = 'none', 300);
+                    toggleBtn.style.transform = 'scale(1)';
+                }
+            };
+
+            toggleBtn.addEventListener('click', toggleChat);
+            closeBtn.addEventListener('click', toggleChat);
+
+            const addMessageToUI = (role, content) => {
+                const msgDiv = document.createElement('div');
+                msgDiv.style.padding = '10px 14px';
+                msgDiv.style.borderRadius = '12px';
+                msgDiv.style.maxWidth = '85%';
+                msgDiv.style.fontSize = '0.9rem';
+                msgDiv.style.lineHeight = '1.4';
+                msgDiv.style.wordWrap = 'break-word';
+
+                if (role === 'user') {
+                    msgDiv.style.alignSelf = 'flex-end';
+                    msgDiv.style.background = '#4f46e5';
+                    msgDiv.style.color = 'white';
+                    msgDiv.style.borderBottomRightRadius = '2px';
+                } else {
+                    msgDiv.style.alignSelf = 'flex-start';
+                    msgDiv.style.background = 'white';
+                    msgDiv.style.border = '1px solid #e2e8f0';
+                    msgDiv.style.color = '#334155';
+                    msgDiv.style.borderBottomLeftRadius = '2px';
+                }
+
+                // Parse AI Markdown to beautiful HTML
+                if (role === 'user') {
+                    msgDiv.textContent = content; // Keep user input raw text to prevent XSS
+                } else {
+                    // Tell Marked.js to parse the string
+                    msgDiv.innerHTML = marked.parse(content);
+
+                    // Add quick inline styles to the generated Markdown paragraphs to keep it tight
+                    const paragraphs = msgDiv.querySelectorAll('p');
+                    paragraphs.forEach(p => p.style.margin = '0 0 8px 0');
+                    const lastP = msgDiv.querySelector('p:last-child');
+                    if (lastP) lastP.style.margin = '0';
+
+                    const uls = msgDiv.querySelectorAll('ul, ol');
+                    uls.forEach(ul => {
+                        ul.style.marginTop = '4px';
+                        ul.style.marginBottom = '8px';
+                        ul.style.paddingLeft = '20px';
+                    });
+                }
+
+                messagesContainer.appendChild(msgDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            };
+
+            const addTypingIndicator = () => {
+                const indicator = document.createElement('div');
+                indicator.id = 'chatbot-typing';
+                indicator.style.alignSelf = 'flex-start';
+                indicator.style.background = 'white';
+                indicator.style.border = '1px solid #e2e8f0';
+                indicator.style.padding = '10px 14px';
+                indicator.style.borderRadius = '12px';
+                indicator.style.borderBottomLeftRadius = '2px';
+                indicator.style.color = '#94a3b8';
+                indicator.style.fontSize = '0.8rem';
+                indicator.style.fontStyle = 'italic';
+                indicator.innerHTML = 'QC Assistant is typing<span class="dots">...</span>';
+                messagesContainer.appendChild(indicator);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                return indicator;
+            };
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const text = input.value.trim();
+                if (!text) return;
+
+                addMessageToUI('user', text);
+                conversationHistory.push({ role: 'user', content: text });
+                input.value = '';
+                input.disabled = true;
+
+                const typingObj = addTypingIndicator();
+
+                try {
+                    // Make async POST to standard Controller logic
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(conversationHistory)
+                    });
+
+                    typingObj.remove();
+
+                    if (response.ok) {
+                        const reply = await response.json();
+                        addMessageToUI('assistant', reply.content);
+                        conversationHistory.push(reply);
+                    } else {
+                        addMessageToUI('assistant', 'Sorry, I am having trouble connecting to the server core.');
+                    }
+                } catch (error) {
+                    typingObj.remove();
+                    addMessageToUI('assistant', 'Sorry, an unexpected network error occurred.');
+                } finally {
+                    input.disabled = false;
+                    input.focus();
+                }
+            });
+        });
+    </script>
+</div>

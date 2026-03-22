@@ -1,0 +1,46 @@
+<aside th:fragment="sidebar(activePage)" class="sidebar"
+    style="width: 260px; background: var(--bg-sidebar, #ffffff); padding: 2rem 0; flex-shrink: 0; border-right: 1px solid rgba(0, 0, 0, 0.05); display: flex; flex-direction: column;">
+    <style>
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(0, 0, 0, 0.05);
+            color: #0f172a !important;
+            border-left-color: #3b82f6 !important;
+        }
+    </style>
+    <div style="padding: 0 2rem 2rem 2rem;">
+        <a th:href="@{/}" style="color: #0f172a; text-decoration: none; font-size: 1.5rem; font-weight: 700;">QC.
+            Seller</a>
+    </div>
+    <nav style="display: flex; flex-direction: column; gap: 0.5rem; flex: 1;">
+        <a th:href="@{/seller/dashboard}" th:classappend="${activePage == 'dashboard'} ? ' active' : ''"
+            class="nav-item"
+            style="display: flex; align-items: center; padding: 1rem 2rem; color: #64748b; text-decoration: none; transition: all 0.3s ease; gap: 12px; border-left: 3px solid transparent;">Dashboard</a>
+        <a th:href="@{/seller/products}" th:classappend="${activePage == 'products'} ? ' active' : ''" class="nav-item"
+            style="display: flex; align-items: center; padding: 1rem 2rem; color: #64748b; text-decoration: none; transition: all 0.3s ease; gap: 12px; border-left: 3px solid transparent;">Products</a>
+        <a th:href="@{/seller/reviews}" th:classappend="${activePage == 'reviews'} ? ' active' : ''" class="nav-item"
+            style="display: flex; align-items: center; padding: 1rem 2rem; color: #64748b; text-decoration: none; transition: all 0.3s ease; gap: 12px; border-left: 3px solid transparent;">Reviews</a>
+        <a th:href="@{/seller/orders}" th:classappend="${activePage == 'orders'} ? ' active' : ''" class="nav-item"
+            style="display: flex; align-items: center; padding: 1rem 2rem; color: #64748b; text-decoration: none; transition: all 0.3s ease; gap: 12px; border-left: 3px solid transparent;">Manage
+            Orders</a>
+        <a th:href="@{/seller/auctions}" th:classappend="${activePage == 'auctions'} ? ' active' : ''" class="nav-item"
+            style="display: flex; align-items: center; padding: 1rem 2rem; color: #64748b; text-decoration: none; transition: all 0.3s ease; gap: 12px; border-left: 3px solid transparent;">My
+            Auctions</a>
+        <a th:href="@{/seller/auctions/active}" th:classappend="${activePage == 'active-auctions'} ? ' active' : ''"
+            class="nav-item"
+            style="display: flex; align-items: center; padding: 1rem 2rem; color: #64748b; text-decoration: none; transition: all 0.3s ease; gap: 12px; border-left: 3px solid transparent;">Active
+            Biddings</a>
+        <a th:href="@{/seller/messages}" th:classappend="${activePage == 'messages'} ? ' active' : ''" class="nav-item"
+            style="display: flex; align-items: center; padding: 1rem 2rem; color: #64748b; text-decoration: none; transition: all 0.3s ease; gap: 12px; border-left: 3px solid transparent;">Inbox</a>
+    </nav>
+    <div
+        style="margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(0, 0, 0, 0.05); padding: 1rem 2rem;">
+        <a th:href="@{/}"
+            style="color: #64748b; text-decoration: none; display: block; padding: 0.5rem 0; font-size: 0.9rem;">&larr;
+            Back to Shop</a>
+        <form th:action="@{/logout}" method="post" style="margin-top: 0.5rem;">
+            <button type="submit"
+                style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.5rem 0; font-size: 0.9rem; text-align: left; width: 100%;">Logout</button>
+        </form>
+    </div>
+</aside>

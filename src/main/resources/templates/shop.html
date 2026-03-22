@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='Shop Collection')}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main style="padding: 100px 0;">
+        <div class="container" style="display: flex; gap: 40px; align-items: flex-start;">
+
+            
+            <aside style="width: 250px; flex-shrink: 0;">
+                <h3 style="font-size: 1.2rem; font-weight: 500; margin-bottom: 20px;">Filters</h3>
+                <form th:action="@{/shop}" method="get" style="display: flex; flex-direction: column; gap: 20px;">
+
+                    <div>
+                        <label
+                            style="display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px;">Search
+                            Products</label>
+                        <input type="text" name="keyword" th:value="${currentKeyword}" placeholder="Enter keyword..."
+                            style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box;">
+                    </div>
+
+                    <div>
+                        <label
+                            style="display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px;">Category</label>
+                        <select name="category"
+                            style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; background: white;">
+                            <option value="">All Categories</option>
+                            <option value="T-Shirts" th:selected="${currentCategory == 'T-Shirts'}">T-Shirts</option>
+                            <option value="Hoodies" th:selected="${currentCategory == 'Hoodies'}">Hoodies</option>
+                            <option value="Pants" th:selected="${currentCategory == 'Pants'}">Pants</option>
+                            <option value="Accessories" th:selected="${currentCategory == 'Accessories'}">Accessories
+                            </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label
+                            style="display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px;">Sort
+                            By</label>
+                        <select name="sort"
+                            style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; background: white;">
+                            <option value="">Default Relevance</option>
+                            <option value="newest" th:selected="${currentSort == 'newest'}">Newest Arrivals</option>
+                            <option value="price_asc" th:selected="${currentSort == 'price_asc'}">Price: Low to High
+                            </option>
+                            <option value="price_desc" th:selected="${currentSort == 'price_desc'}">Price: High to Low
+                            </option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn primary-btn"
+                        style="width: 100%; padding: 12px; background: var(--primary-color); color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: 500;">
+                        Apply Filters
+                    </button>
+                    <a th:href="@{/shop}"
+                        style="text-align: center; font-size: 0.85rem; color: var(--text-light); text-decoration: underline;">Clear
+                        All</a>
+                </form>
+            </aside>
+
+            
+            <div style="flex: 1;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+                    <h1 style="font-size: 1.8rem; font-weight: 400; margin: 0;"
+                        th:text="${categoryFeatureTitle != null ? categoryFeatureTitle : 'The Collection'}">The
+                        Collection</h1>
+                    <span style="color: var(--text-light); font-size: 0.9rem;"
+                        th:text="${products.size()} + ' products found'">0 products found</span>
+                </div>
+
+                <div class="product-grid"
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px;">
+
+                    
+                    <div th:each="product : ${products}" class="product-card"
+                        style="background: white; border: 1px solid var(--border-color); padding: 10px; border-radius: 0.5rem; overflow: hidden; transition: transform 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                        <a th:href="@{/product/{id}(id=${product.id})}"
+                            style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-image-wrapper"
+                                style="position: relative; overflow: hidden; background: var(--secondary-color); padding-top: 130%; margin-bottom: 15px; border-radius: 4px;">
+
+                                
+                                <div
+                                    style="position: absolute; top: 10px; right: 10px; z-index: 10; background: rgba(255,255,255,0.9); padding: 5px 8px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                    <input type="checkbox" class="compare-checkbox" th:value="${product.id}"
+                                        style="cursor: pointer; width: 16px; height: 16px;">
+                                    <label
+                                        style="font-size: 0.75rem; font-weight: 500; cursor: pointer; color: var(--text-color);">Compare</label>
+                                </div>
+
+                                <img th:if="${product.mainImageUrl}" th:src="${product.mainImageUrl}" alt="P"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" />
+                                <div th:unless="${product.mainImageUrl}"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-light); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">
+                                    [[${product.category}]]
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 style="font-size: 1rem; font-weight: 500; margin: 0 0 5px 0; color: var(--primary-color);"
+                                    th:text="${product.title}">Title</h3>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <p style="color: var(--text-light); font-size: 0.85rem; margin: 0;"
+                                        th:text="${product.category}">Category</p>
+                                    <span class="price" style="font-weight: 500; color: var(--primary-color);"
+                                        th:text="${'LKR ' + product.basePrice}">LKR 0.00</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(products)}"
+                        style="grid-column: 1 / -1; padding: 60px 0; text-align: center; color: var(--text-light);">
+                        <h2>No products match your criteria.</h2>
+                        <p>Try adjusting your filters or search terms.</p>
+                        <a th:href="@{/shop}"
+                            style="display: inline-block; margin-top: 20px; padding: 10px 25px; border: 1px solid var(--primary-color); color: var(--primary-color); text-decoration: none;">Reset
+                            Filters</a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>

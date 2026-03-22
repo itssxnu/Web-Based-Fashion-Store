@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Auctions | QC.</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --seller-bg: #f8fafc;
+            --seller-card: #ffffff;
+            --seller-text: #0f172a;
+        }
+
+        body {
+            background-color: var(--seller-bg);
+            color: var(--seller-text);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--seller-card);
+            padding: 2rem 0;
+            flex-shrink: 0;
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 2rem 3rem;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            background-color: var(--surface-color);
+            padding: 4rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .auction-card {
+            background: var(--seller-card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .auction-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .auction-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .auction-info {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .auction-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--seller-text);
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+        }
+
+        .auction-title:hover {
+            color: var(--primary-color);
+        }
+
+        .auction-seller {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .bid-label {
+            font-size: 0.75rem;
+            color: #10b981;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .current-bid {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--seller-text);
+        }
+
+        .btn-bid {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .btn-bid:hover {
+            background: #2563eb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            grid-column: 1 / -1;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        
+        <aside th:replace="~{fragments/seller-sidebar :: sidebar(activePage='active-auctions')}"></aside>
+
+        <main class="main-content">
+            <div class="page-header"
+                style="background: transparent; border-bottom: 1px solid rgba(0, 0, 0, 0.05);">
+                <h1 class="page-title" style="color: #0f172a;">Live Biddings</h1>
+                <p class="page-subtitle" style="color: #64748b;">Discover exclusive pieces and place your highest bid.
+                    Auctions close
+                    automatically
+                    when the target is reached.</p>
+            </div>
+
+            <div class="grid-container">
+                <div th:each="auction : ${auctions}" class="auction-card">
+                    <a th:href="@{/seller/auctions/active/{id}(id=${auction.id})}">
+                        <img th:src="${auction.product.mainImageUrl}" alt="Product" class="auction-image">
+                    </a>
+                    <div class="auction-info">
+                        <a th:href="@{/seller/auctions/active/{id}(id=${auction.id})}" class="auction-title"
+                            th:text="${auction.product.title}">Product Title</a>
+                        <div class="auction-seller" th:text="'Sold by: ' + ${auction.seller.name}">Seller Name</div>
+                        <div style="font-size: 0.85rem; color: #3b82f6; margin-bottom: 0.5rem; font-weight: 500;"
+                            th:text="'Includes ' + ${auction.clothingPieces} + ' pieces'">Pieces count</div>
+
+                        <div class="price-row">
+                            <div>
+                                <div class="bid-label">Current Top Bid</div>
+                                <div class="current-bid"
+                                    th:text="${'LKR ' + #numbers.formatDecimal(auction.currentHighestBid, 1, 'COMMA', 2, 'POINT')}">
+                                    Price</div>
+                            </div>
+                            <a th:href="@{/seller/auctions/active/{id}(id=${auction.id})}" class="btn-bid">Bid
+                                Now</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(auctions)}" class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        style="margin-bottom: 1rem; opacity: 0.5;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+        </main>
+    </div>
+</body>
+
+</html>

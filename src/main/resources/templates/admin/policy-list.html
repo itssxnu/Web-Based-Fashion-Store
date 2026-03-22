@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>AI Knowledge Base | Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/admin/layout.html}" />
+    <style th:replace="~{admin/layout :: style}"></style>
+</head>
+
+<body
+    style="margin: 0; font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh;">
+
+    
+    <aside th:replace="~{admin/layout :: sidebar(activePage='policies')}"></aside>
+
+    
+    <main class="main-content"
+        style="flex: 1; padding: 2rem 3rem; display: flex; flex-direction: column; overflow-y: auto;">
+
+        
+        <div class="header-top"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+            <div>
+                <h1 style="font-size: 1.8rem; font-weight: 500; margin: 0; color: #0f172a;">AI Knowledge Base</h1>
+                <div style="color: #64748b; font-size: 0.9rem; margin-top: 0.5rem;">Train your Chat Assistant. What
+                    policies should it memorize?</div>
+            </div>
+        </div>
+
+        
+        <div th:if="${param.success}" class="alert alert-success"
+            style="padding: 1rem; margin-bottom: 1.5rem; border-radius: 0.375rem; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981;"
+            th:text="${param.success}"></div>
+        <div th:if="${param.error}" class="alert alert-danger"
+            style="padding: 1rem; margin-bottom: 1.5rem; border-radius: 0.375rem; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444;"
+            th:text="${param.error}"></div>
+
+        
+        <div style="display: flex; gap: 2rem; align-items: flex-start;">
+
+            
+            <div
+                style="flex: 2; background-color: #ffffff; border-radius: 0.5rem; border: 1px solid #e2e8f0; overflow: hidden;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th
+                                style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                                Rule Topic</th>
+                            <th
+                                style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                                Contextual Content</th>
+                            <th
+                                style="padding: 1rem; text-align: right; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                                Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="policy : ${policies}">
+                            <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-weight: 500; font-size: 0.9rem;"
+                                th:text="${policy.topic}">Topic Name</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #64748b; font-size: 0.85rem; max-width: 400px; line-height: 1.4;"
+                                th:text="${policy.content}">Policy Text details</td>
+                            <td
+                                style="padding: 1rem; border-bottom: 1px solid #e2e8f0; text-align: right; vertical-align: top;">
+                                <a th:href="@{/admin/policies/{id}/delete(id=${policy.id})}"
+                                    onclick="return confirm('WARNING: Deleting this policy will erase it from the AI memory banks. Proceed?');"
+                                    style="color: #ef4444; text-decoration: none; font-size: 0.85rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M3 6h18"></path>
+                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                    </svg>
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(policies)}">
+                            <td colspan="3"
+                                style="padding: 2rem; text-align: center; color: #64748b; font-size: 0.85rem;">
+                                The AI Knowledge Base is empty. Add formal policies to train it.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            
+            <div
+                style="flex: 1; background-color: #ffffff; border-radius: 0.5rem; border: 1px solid #e2e8f0; padding: 2rem; position: sticky; top: 2rem;">
+                <h2 style="font-size: 1.2rem; font-weight: 500; margin-top: 0; margin-bottom: 1.5rem; color: #0f172a;">
+                    Teach AI a Rule</h2>
+                <form th:action="@{/admin/policies/new}" th:object="${newPolicy}" method="post">
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label
+                            style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #64748b;">Policy
+                            Topic</label>
+                        <input type="text" th:field="*{topic}" required placeholder="e.g. Return Policy"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; background: #f8fafc; color: #0f172a; border-radius: 0.375rem; box-sizing: border-box; font-family: inherit;">
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label
+                            style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #64748b;">Context
+                            (What it should know)</label>
+                        <textarea th:field="*{content}" rows="6" required
+                            placeholder="e.g. We accept returns within 30 days of purchase if the tag is still attached."
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; background: #f8fafc; color: #0f172a; border-radius: 0.375rem; box-sizing: border-box; font-family: inherit; resize: vertical; line-height: 1.4;"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn"
+                        style="width: 100%; background-color: #10b981; color: #0f172a; border: none; padding: 0.875rem; border-radius: 0.375rem; font-weight: 500; cursor: pointer; transition: background 0.2s;">
+                        Save to Knowledge Base
+                    </button>
+
+                </form>
+            </div>
+
+        </div>
+
+    </main>
+</body>
+
+</html>

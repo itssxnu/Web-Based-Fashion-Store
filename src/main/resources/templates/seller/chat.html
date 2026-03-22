@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="'Chat | ' + ${otherUser.name}">Chat | QC Vendor</title>
+    
+    <link rel="stylesheet" th:href="@{/admin/layout.html}" />
+    <style th:replace="~{admin/layout :: style}"></style>
+</head>
+
+<body
+    style="margin: 0; font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh;">
+
+    
+    <aside th:replace="~{fragments/seller-sidebar :: sidebar(activePage='messages')}"></aside>
+
+    <main class="main-content"
+        style="flex: 1; padding: 2rem 3rem; display: flex; flex-direction: column; overflow-y: hidden;">
+
+        <div class="header-top"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+            <h1 style="font-size: 1.8rem; font-weight: 500; margin: 0; color: #0f172a;">Inbox</h1>
+        </div>
+
+        <div style="display: flex; gap: 2rem; flex: 1; min-height: 500px; max-height: calc(100vh - 150px);">
+
+            
+            <div
+                style="width: 320px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.5rem; overflow: hidden; display: flex; flex-direction: column;">
+                <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; background-color: #f8fafc;">
+                    <h2 style="margin: 0; font-size: 1.1rem; font-weight: 500; color: #0f172a;">Conversations</h2>
+                </div>
+
+                <div style="flex: 1; overflow-y: auto;">
+                    
+                    <a th:href="@{/seller/messages/{id}(id=${otherUser.id})}"
+                        style="display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-left: 4px solid #3b82f6; background-color: rgba(59, 130, 246, 0.1); border-bottom: 1px solid rgba(0, 0, 0,0.05); text-decoration: none; color: inherit;">
+                        <div
+                            style="width: 40px; height: 40px; border-radius: 50%; background: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">
+                            <span th:text="${#strings.substring(otherUser.name, 0, 1).toUpperCase()}">U</span>
+                        </div>
+                        <div style="flex: 1; overflow: hidden;">
+                            <div style="font-weight: 600; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                th:text="${otherUser.name}">User Name</div>
+                            <div style="font-size: 0.8rem; color: #10b981; margin-top: 0.2rem;"
+                                th:if="${otherUser.role.name() == 'SELLER'}">Seller</div>
+                            <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.2rem;"
+                                th:if="${otherUser.role.name() == 'USER'}">Customer</div>
+                        </div>
+                    </a>
+
+                    
+                    <th:block th:each="user : ${conversations}">
+                        <a th:if="${user.id != otherUser.id}" th:href="@{/seller/messages/{id}(id=${user.id})}"
+                            style="display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(0, 0, 0,0.05); border-left: 4px solid transparent; text-decoration: none; transition: background 0.2s; color: inherit;"
+                            onmouseover="this.style.backgroundColor='#e2e8f0'"
+                            onmouseout="this.style.backgroundColor='transparent'">
+                            <div
+                                style="width: 40px; height: 40px; border-radius: 50%; background: #475569; color: #0f172a; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">
+                                <span th:text="${#strings.substring(user.name, 0, 1).toUpperCase()}">U</span>
+                            </div>
+                            <div style="flex: 1; overflow: hidden;">
+                                <div style="font-weight: 500; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                    th:text="${user.name}">User Name</div>
+                            </div>
+                        </a>
+                    </th:block>
+                </div>
+            </div>
+
+            
+            <section
+                style="flex: 1; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.5rem; display: flex; flex-direction: column; overflow: hidden;">
+
+                
+                <div
+                    style="padding: 1rem 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 1rem; background-color: #f8fafc;">
+                    <div
+                        style="width: 40px; height: 40px; border-radius: 50%; background: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        <span th:text="${#strings.substring(otherUser.name, 0, 1).toUpperCase()}">U</span>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.1rem; color: #0f172a;" th:text="${otherUser.name}">
+                            Recipient</h3>
+                        <div style="font-size: 0.8rem; color: #10b981; margin-top: 0.2rem;"
+                            th:if="${otherUser.role.name() == 'SELLER'}">Verified Seller</div>
+                        <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.2rem;"
+                            th:if="${otherUser.role.name() == 'USER'}">Verified Customer</div>
+                    </div>
+                </div>
+
+                
+                <div id="chat-stream"
+                    style="flex: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; background-color: #ffffff;">
+
+                    <div th:each="msg : ${chatHistory}" th:with="isSelf=${msg.sender.id == currentUser.id}"
+                        th:style="${isSelf ? 'align-self: flex-end; max-width: 70%;' : 'align-self: flex-start; max-width: 70%;'}">
+
+                        <div
+                            th:style="${isSelf ? 'background: #3b82f6; color: white; border-radius: 1rem 1rem 0 1rem; padding: 0.75rem 1rem;' : 'background: #e2e8f0; color: #0f172a; border-radius: 1rem 1rem 1rem 0; padding: 0.75rem 1rem;'}">
+                            <div style="font-size: 0.95rem; line-height: 1.5; word-wrap: break-word;"
+                                th:text="${msg.content}">Message text here</div>
+                        </div>
+
+                        <div th:style="${isSelf ? 'text-align: right; font-size: 0.7rem; color: #64748b; margin-top: 0.35rem;' : 'text-align: left; font-size: 0.7rem; color: #64748b; margin-top: 0.35rem;'}"
+                            th:text="${#temporals.format(msg.timestamp, 'MMM dd, HH:mm')}">Time</div>
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(chatHistory)}"
+                        style="text-align: center; color: #64748b; padding: 2rem;">
+                        Say hello to <span th:text="${otherUser.name}" style="color: #64748b;">them</span>!
+                    </div>
+                </div>
+
+                
+                <form th:action="@{/seller/messages/{id}/send(id=${otherUser.id})}" method="post"
+                    style="padding: 1rem 1.5rem; background-color: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 1rem;">
+                    <input type="text" name="content" required placeholder="Type your message here..."
+                        autocomplete="off"
+                        style="flex: 1; padding: 0.8rem 1.25rem; border: 1px solid #334155; border-radius: 2rem; font-size: 0.95rem; outline: none; background: #ffffff; color: #0f172a;">
+                    <button type="submit"
+                        style="background: #3b82f6; color: white; border: none; border-radius: 2rem; padding: 0 1.5rem; font-weight: 500; cursor: pointer; transition: 0.2s;">
+                        Send
+                    </button>
+                </form>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <script>
+        // Scroll chat stream to bottom on load
+        document.addEventListener("DOMContentLoaded", function () {
+            var chatStream = document.getElementById("chat-stream");
+            chatStream.scrollTop = chatStream.scrollHeight;
+        });
+    </script>
+</body>
+
+</html>

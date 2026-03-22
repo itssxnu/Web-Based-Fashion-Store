@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='About Quick Cart')}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main style="max-width: 800px; margin: 4rem auto; padding: 0 2rem; min-height: 60vh;">
+        <h1 style="font-size: 2.5rem; font-weight: 300; margin-bottom: 2rem; color: var(--primary-color);">About Quick
+            Cart</h1>
+
+        <div
+            style="background: white; border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 3rem;">
+            <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-color); margin-bottom: 1.5rem;">
+                <strong>Quick Cart</strong> is an intelligent e-commerce platform designed to move beyond basic online
+                shopping. It combines advanced product discovery, personalized recommendations, secure OTP verification,
+                supplier coordination, and market analytics into one modern system.
+            </p>
+            <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-color); margin-bottom: 0;">
+                Our goal is to deliver a smarter, faster, and more secure shopping experience while helping businesses
+                manage operations efficiently through intelligent automation and data-driven insights.
+            </p>
+        </div>
+
+        <h2 style="font-size: 1.75rem; font-weight: 400; margin-bottom: 1.5rem; color: var(--primary-color);">Our Team &
+            Feature Responsibilities</h2>
+
+        <div
+            style="background: white; border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 3rem;">
+            <ul style="list-style-type: none; padding: 0; margin: 0;">
+                <li
+                    style="padding: 1rem 0; border-bottom: 1px solid var(--border-color); display: flex; align-items: flex-start; gap: 1rem;">
+                    <span style="font-weight: 600; color: var(--primary-color); min-width: 120px;">IT24104028</span>
+                    <span style="color: var(--text-color);">Advanced Product Discovery & Showcase</span>
+                </li>
+                <li
+                    style="padding: 1rem 0; border-bottom: 1px solid var(--border-color); display: flex; align-items: flex-start; gap: 1rem;">
+                    <span style="font-weight: 600; color: var(--primary-color); min-width: 120px;">IT24103153</span>
+                    <span style="color: var(--text-color);">Cart, Checkout & Chatbot</span>
+                </li>
+                <li
+                    style="padding: 1rem 0; border-bottom: 1px solid var(--border-color); display: flex; align-items: flex-start; gap: 1rem;">
+                    <span style="font-weight: 600; color: var(--primary-color); min-width: 120px;">IT24104345</span>
+                    <span style="color: var(--text-color);">User Engagement & Recommendation</span>
+                </li>
+                <li
+                    style="padding: 1rem 0; border-bottom: 1px solid var(--border-color); display: flex; align-items: flex-start; gap: 1rem;">
+                    <span style="font-weight: 600; color: var(--primary-color); min-width: 120px;">IT24101067</span>
+                    <span style="color: var(--text-color);">Order & Supplier Management</span>
+                </li>
+                <li
+                    style="padding: 1rem 0; border-bottom: 1px solid var(--border-color); display: flex; align-items: flex-start; gap: 1rem;">
+                    <span style="font-weight: 600; color: var(--primary-color); min-width: 120px;">IT24101982</span>
+                    <span style="color: var(--text-color);">Comparison & Market Intelligence</span>
+                </li>
+                <li style="padding: 1rem 0; display: flex; align-items: flex-start; gap: 1rem;">
+                    <span style="font-weight: 600; color: var(--primary-color); min-width: 120px;">IT24102079</span>
+                    <span style="color: var(--text-color);">Order History & Bid System</span>
+                </li>
+            </ul>
+        </div>
+
+        <div
+            style="text-align: center; color: var(--text-light); font-size: 1.1rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+            <strong style="color: var(--primary-color);">SLIIT – IT2150 IT Project</strong>
+        </div>
+
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>

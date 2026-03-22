@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='Verify Checkout')}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main>
+        <section class="login-section" style="padding: 100px 0; text-align: center;">
+            <div class="container" style="max-width: 400px; margin: 0 auto;">
+                <h1 style="font-weight: 300; margin-bottom: 20px;">Verify It's You</h1>
+                <p style="color: var(--text-light); margin-bottom: 30px; font-size: 0.95rem;">
+                    For your security, please enter the 6-digit code we sent to your email to complete checkout.
+                </p>
+
+                <div th:if="${error}" style="color: red; margin-bottom: 20px; font-size: 0.9rem;" th:text="${error}">
+                </div>
+
+                <form th:action="@{/checkout/verify-otp}" method="post"
+                    style="display: flex; flex-direction: column; gap: 20px;">
+
+                    <div>
+                        <input type="text" name="code" placeholder="Enter 6-digit OTP" required maxlength="6"
+                            pattern="\d{6}"
+                            style="padding: 15px; border: 1px solid var(--border-color); width: 100%; text-align: center; letter-spacing: 5px; font-size: 1.2rem; box-sizing: border-box;">
+                    </div>
+
+                    <button type="submit" class="btn primary-btn"
+                        style="padding: 15px; background: var(--primary-color); color: white; border: none; cursor: pointer; margin-top: 10px;">PROCEED TO CHECKOUT</button>
+
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-light);">
+                        Didn't receive the code? <a th:href="@{/checkout}"
+                            style="color: var(--primary-color); text-decoration: underline;">Resend</a>
+                    </p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QC | Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #f8fafc;
+            --bg-sidebar: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #4f46e5;
+            --hover: #4338ca;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: var(--bg-sidebar);
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+        }
+
+        .sidebar-brand {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            padding-left: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem 3rem;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--hover);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.375rem;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-sidebar);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside th:fragment="sidebar(activePage)" class="sidebar">
+        <div class="sidebar-brand">QC. ADMIN</div>
+        <nav>
+            <a th:href="@{/admin/dashboard}" th:classappend="${activePage == 'dashboard'} ? ' active' : ''"
+                class="nav-link">Market Intelligence</a>
+            <a th:href="@{/admin/products}" th:classappend="${activePage == 'products'} ? ' active' : ''"
+                class="nav-link">Products Catalog</a>
+            <a th:href="@{/admin/users}" th:classappend="${activePage == 'users'} ? ' active' : ''"
+                class="nav-link">Platform Users</a>
+            <a th:href="@{/admin/categories}" th:classappend="${activePage == 'categories'} ? ' active' : ''"
+                class="nav-link">Categories</a>
+            <a th:href="@{/admin/policies}" th:classappend="${activePage == 'policies'} ? ' active' : ''"
+                class="nav-link">AI Knowledge</a>
+            <a th:href="@{/admin/reports}" th:classappend="${activePage == 'reports'} ? ' active' : ''"
+                class="nav-link">Seller Reports</a>
+            <a href="#" class="nav-link">Orders (Coming Soon)</a>
+            <form th:action="@{/logout}" method="post" style="margin-top: auto; padding-top: 2rem;">
+                <button type="submit" class="nav-link"
+                    style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">Logout</button>
+            </form>
+        </nav>
+    </aside>
+
+</body>
+
+</html>

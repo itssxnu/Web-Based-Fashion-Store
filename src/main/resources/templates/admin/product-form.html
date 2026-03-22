@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Product Form | Admin Dashboard</title>
+    
+    <link rel="stylesheet" th:href="@{/admin/layout.html}" />
+    <style th:replace="~{admin/layout :: style}"></style>
+</head>
+
+<body
+    style="margin: 0; font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh;">
+
+    <aside th:replace="~{admin/layout :: sidebar(activePage='products')}"></aside>
+
+    <main class="main-content"
+        style="flex: 1; padding: 2rem 3rem; display: flex; flex-direction: column; overflow-y: auto;">
+
+        <div class="header-top"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+            <h1 style="font-size: 1.8rem; font-weight: 500; margin: 0;"
+                th:text="${productDto.id == null ? 'Add New Product' : 'Edit Product'}">Form</h1>
+            <a th:href="@{/admin/products}" style="color: #64748b; text-decoration: none;">&larr; Back to List</a>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger"
+            style="padding: 1rem; margin-bottom: 1.5rem; border-radius: 0.375rem; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444;"
+            th:text="${error}"></div>
+
+        <form
+            th:action="@{${productDto.id == null ? '/admin/products/new' : '/admin/products/' + productDto.id + '/edit'}}"
+            th:object="${productDto}" method="post"
+            style="background-color: #ffffff; padding: 2rem; border-radius: 0.5rem; max-width: 600px;">
+
+            <input type="hidden" th:field="*{id}" />
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: #64748b; font-size: 0.875rem;">Title</label>
+                <input type="text" th:field="*{title}" required
+                    style="width: 100%; padding: 0.75rem; border-radius: 0.375rem; border: 1px solid #e2e8f0; background: #f8fafc; color: #0f172a; box-sizing: border-box;">
+                <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"
+                    style="color: #ef4444; font-size: 0.8rem; display: block; margin-top: 5px;"></span>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="flex: 1;">
+                    <label
+                        style="display: block; margin-bottom: 0.5rem; color: #64748b; font-size: 0.875rem;">Category</label>
+                    <select th:field="*{category}" required
+                        style="width: 100%; padding: 0.75rem; border-radius: 0.375rem; border: 1px solid #e2e8f0; background: #f8fafc; color: #0f172a; box-sizing: border-box; appearance: none; cursor: pointer;">
+                        <option value="" disabled selected>-- Select a Category --</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.name}" th:text="${cat.name}"></option>
+                    </select>
+                    <span th:if="${#fields.hasErrors('category')}" th:errors="*{category}"
+                        style="color: #ef4444; font-size: 0.8rem; display: block; margin-top: 5px;"></span>
+                </div>
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: #64748b; font-size: 0.875rem;">Base
+                        Price (LKR)</label>
+                    <input type="number" step="0.01" th:field="*{basePrice}" required
+                        style="width: 100%; padding: 0.75rem; border-radius: 0.375rem; border: 1px solid #e2e8f0; background: #f8fafc; color: #0f172a; box-sizing: border-box;">
+                    <span th:if="${#fields.hasErrors('basePrice')}" th:errors="*{basePrice}"
+                        style="color: #ef4444; font-size: 0.8rem; display: block; margin-top: 5px;"></span>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label
+                    style="display: block; margin-bottom: 0.5rem; color: #64748b; font-size: 0.875rem;">Description</label>
+                <textarea th:field="*{description}" rows="4" required
+                    style="width: 100%; padding: 0.75rem; border-radius: 0.375rem; border: 1px solid #e2e8f0; background: #f8fafc; color: #0f172a; box-sizing: border-box; resize: vertical;"></textarea>
+                <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"
+                    style="color: #ef4444; font-size: 0.8rem; display: block; margin-top: 5px;"></span>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: #64748b; font-size: 0.875rem;">Image
+                    URL</label>
+                <input type="url" th:field="*{mainImageUrl}" required placeholder="https://example.com/image.jpg"
+                    style="width: 100%; padding: 0.75rem; border-radius: 0.375rem; border: 1px solid #e2e8f0; background: #f8fafc; color: #0f172a; box-sizing: border-box;">
+                <span th:if="${#fields.hasErrors('mainImageUrl')}" th:errors="*{mainImageUrl}"
+                    style="color: #ef4444; font-size: 0.8rem; display: block; margin-top: 5px;"></span>
+                <div th:if="${productDto.mainImageUrl}" style="margin-top: 1rem;">
+                    <p style="font-size: 0.8rem; color: #64748b; margin: 0 0 5px 0;">Current Image Preview:</p>
+                    <img th:src="${productDto.mainImageUrl}"
+                        style="max-width: 100px; border-radius: 4px; border: 1px solid #e2e8f0;" />
+                </div>
+            </div>
+
+            
+            <div
+                style="margin-bottom: 2rem; background: #f8fafc; padding: 1.5rem; border-radius: 0.375rem; border: 1px solid #e2e8f0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <label style="color: #64748b; font-size: 1rem; font-weight: 500; margin: 0;">Carousel Images</label>
+                    <button type="button" onclick="addImageRow()"
+                        style="background: #3b82f6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.8rem;">+
+                        Add Photo</button>
+                </div>
+
+                <div id="images-container">
+                    <div th:each="imgUrl, stat : ${productDto.additionalImageUrls}"
+                        style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end;">
+                        <div style="flex: 1;">
+                            <input type="url" th:field="*{additionalImageUrls[__${stat.index}__]}" required
+                                placeholder="https://example.com/extra-photo.jpg"
+                                style="width: 100%; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #e2e8f0; background: #ffffff; color: #0f172a; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <button type="button" onclick="this.parentElement.parentElement.remove()"
+                                style="padding: 0.5rem; background: #ef4444; color: #0f172a; border: none; border-radius: 0.25rem; cursor: pointer;">X</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div
+                style="margin-bottom: 2rem; background: #f8fafc; padding: 1.5rem; border-radius: 0.375rem; border: 1px solid #e2e8f0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <label style="color: #64748b; font-size: 1rem; font-weight: 500; margin: 0;">Product
+                        Variants</label>
+                    <button type="button" onclick="addVariantRow()"
+                        style="background: #10b981; color: #0f172a; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.8rem;">+
+                        Add Variant</button>
+                </div>
+
+                <div id="variants-container">
+                    <div th:each="variant, stat : ${productDto.variants}" class="variant-row"
+                        style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 0.75rem; color: #64748b;">Size</label>
+                            <input type="text" th:field="*{variants[__${stat.index}__].size}" required
+                                placeholder="Size (e.g. M)"
+                                style="width: 100%; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #e2e8f0; background: #ffffff; color: #0f172a; box-sizing: border-box;">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 0.75rem; color: #64748b;">Color</label>
+                            <input type="text" th:field="*{variants[__${stat.index}__].color}" required
+                                placeholder="Color"
+                                style="width: 100%; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #e2e8f0; background: #ffffff; color: #0f172a; box-sizing: border-box;">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 0.75rem; color: #64748b;">Stock</label>
+                            <input type="number" th:field="*{variants[__${stat.index}__].stockQuantity}" required
+                                min="0"
+                                style="width: 100%; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #e2e8f0; background: #ffffff; color: #0f172a; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <button type="button" onclick="this.parentElement.parentElement.remove()"
+                                style="padding: 0.5rem; background: #ef4444; color: #0f172a; border: none; border-radius: 0.25rem; cursor: pointer;">X</button>
+                        </div>
+                    </div>
+                </div>
+                <p id="no-variants-msg" th:if="${#lists.isEmpty(productDto.variants)}"
+                    style="color: #64748b; font-size: 0.85rem; text-align: center; margin-top: 1rem;">No variants added
+                    yet. Click '+ Add Variant' to add sizes and colors.</p>
+            </div>
+
+            <button type="submit" class="btn"
+                style="width: 100%; background-color: #4f46e5; color: white; padding: 0.75rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500;">
+                <span th:text="${productDto.id == null ? 'Save Product' : 'Update Product'}">Save</span>
+            </button>
+        </form>
+    </main>
+
+    <script th:inline="javascript">
+        let variantIndex = /*[[${productDto.variants != null ? productDto.variants.size() : 0}]]*/ 0;
+
+        function addVariantRow() {
+            const container = document.getElementById('variants-container');
+            const msg = document.getElementById('no-variants-msg');
+            if (msg) msg.style.display = 'none';
+
+            const row = document.createElement('div');
+            row.className = 'variant-row';
+            row.style.cssText = 'display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end;';
+
+            row.innerHTML = `
+                <div style="flex: 1;">
+                    <label style="font-size: 0.75rem; color: #64748b;">Size</label>
+                    <input type="text" name="variants[${variantIndex}].size" required placeholder="Size (e.g. M)" style="width: 100%; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #e2e8f0; background: #ffffff; color: #0f172a; box-sizing: border-box;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 0.75rem; color: #64748b;">Color</label>
+                    <input type="text" name="variants[${variantIndex}].color" required placeholder="Color" style="width: 100%; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #e2e8f0; background: #ffffff; color: #0f172a; box-sizing: border-box;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 0.75rem; color: #64748b;">Stock</label>
+                    <input type="number" name="variants[${variantIndex}].stockQuantity" required min="0" value="0" style="width: 100%; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #e2e8f0; background: #ffffff; color: #0f172a; box-sizing: border-box;">
+                </div>
+                <div>
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" style="padding: 0.5rem; background: #ef4444; color: #0f172a; border: none; border-radius: 0.25rem; cursor: pointer;">X</button>
+                </div>
+            `;
+            container.appendChild(row);
+            variantIndex++;
+        }
+
+        let imageIndex = /*[[${productDto.additionalImageUrls != null ? productDto.additionalImageUrls.size() : 0}]]*/ 0;
+
+        function addImageRow() {
+            const container = document.getElementById('images-container');
+            const row = document.createElement('div');
+            row.style.cssText = 'display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end;';
+            row.innerHTML = `
+                <div style="flex: 1;">
+                    <input type="url" name="additionalImageUrls[${imageIndex}]" required placeholder="https://example.com/extra-photo.jpg" style="width: 100%; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #e2e8f0; background: #ffffff; color: #0f172a; box-sizing: border-box;">
+                </div>
+                <div>
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" style="padding: 0.5rem; background: #ef4444; color: #0f172a; border: none; border-radius: 0.25rem; cursor: pointer;">X</button>
+                </div>
+            `;
+            container.appendChild(row);
+            imageIndex++;
+        }
+    </script>
+</body>
+
+</html>

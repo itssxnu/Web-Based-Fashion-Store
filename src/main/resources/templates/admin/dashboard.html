@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Market Intelligence | Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/admin/layout.html}" />
+    <style th:replace="~{admin/layout :: style}"></style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body
+    style="margin: 0; font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh;">
+
+    <aside th:replace="~{admin/layout :: sidebar(activePage='dashboard')}"></aside>
+
+    <main class="main-content"
+        style="flex: 1; padding: 2rem 3rem; display: flex; flex-direction: column; overflow-y: auto;">
+
+        <div class="header-top">
+            <h1 style="font-size: 1.8rem; font-weight: 500; margin: 0; color: #0f172a;">Market Intelligence</h1>
+            <div style="color: #64748b; font-size: 0.9rem;">Intelligence & Analytics Engine</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+            
+            <div style="background-color: #ffffff; border-radius: 0.5rem; border: 1px solid #e2e8f0; padding: 1.5rem;">
+                <h2 style="font-size: 1.25rem; font-weight: 500; margin: 0 0 1rem 0; color: #0f172a;">Monthly Profit
+                    Reporting</h2>
+                <canvas id="profitChart" height="100"></canvas>
+            </div>
+
+            
+            <div style="background-color: #ffffff; border-radius: 0.5rem; border: 1px solid #e2e8f0; padding: 1.5rem;">
+                <h2 style="font-size: 1.25rem; font-weight: 500; margin: 0 0 1rem 0; color: #0f172a;">Top Selling Products
+                </h2>
+                <div th:each="item, iterStat : ${bestSelling}"
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #4f46e5; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;"
+                            th:text="${iterStat.count}">1</div>
+                        <div style="color: #0f172a; font-size: 0.9rem;" th:text="${item[0]}">Product Name</div>
+                    </div>
+                    <div style="color: #10b981; font-weight: 600; font-size: 0.9rem;" th:text="${item[1] + ' units'}">10
+                        units</div>
+                </div>
+                <div th:if="${#lists.isEmpty(bestSelling)}"
+                    style="color: #64748b; font-size: 0.9rem; text-align: center; padding: 1rem;">No sales data
+                    available yet.</div>
+            </div>
+        </div>
+
+        
+        <div style="background-color: #ffffff; border-radius: 0.5rem; border: 1px solid #e2e8f0; padding: 1.5rem;">
+            <h2 style="font-size: 1.25rem; font-weight: 500; margin: 0 0 1rem 0; color: #0f172a;">Seasonal Demand &
+                Category Trends</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th
+                            style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                            Month</th>
+                        <th
+                            style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                            Top Category</th>
+                        <th
+                            style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                            Demand Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="trend : ${seasonalDemand}">
+                        <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-size: 0.85rem;"
+                            th:text="${trend[0]}">Month</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #60a5fa; font-weight: 500; font-size: 0.85rem;"
+                            th:text="${trend[1]}">Category</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #10b981; font-weight: 600; font-size: 0.85rem;"
+                            th:text="${trend[2] + ' requests'}">100 requests</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(seasonalDemand)}">
+                        <td colspan="3" style="padding: 2rem; text-align: center; color: #64748b; font-size: 0.85rem;">
+                            Insufficient data to calculate seasonal demand.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const profitsData = /*[[${monthlyProfits}]]*/[];
+
+        const labels = profitsData.map(item => item[0]);
+        const data = profitsData.map(item => item[1]);
+
+        const ctx = document.getElementById('profitChart');
+        if (ctx && profitsData.length > 0) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Monthly Revenue (LKR)',
+                        data: data,
+                        backgroundColor: '#4f46e5',
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#e2e8f0'
+                            },
+                            ticks: {
+                                color: '#64748b'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#64748b'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#0f172a'
+                            }
+                        }
+                    }
+                }
+            });
+        } else if (ctx) {
+            ctx.parentElement.innerHTML += '<div style="color: #64748b; font-size: 0.9rem; text-align: center; padding: 2rem;">No revenue data available yet.</div>';
+            ctx.style.display = 'none';
+        }
+        /*]]>*/
+    </script>
+</body>
+
+</html>

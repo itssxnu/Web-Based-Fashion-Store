@@ -1,0 +1,20 @@
+package com.app.store.repository;
+
+import com.app.store.entity.Role;
+import com.app.store.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+    List<User> findByRoleNot(Role role);
+
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByPhone(String phone);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByPhone(String phone);
+}

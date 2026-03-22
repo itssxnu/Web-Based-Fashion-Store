@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Seller Dashboard | QC Vendor</title>
+    
+    <link rel="stylesheet" th:href="@{/admin/layout.html}" />
+    <style th:replace="~{admin/layout :: style}"></style>
+    
+</head>
+
+<body
+    style="margin: 0; font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; display: flex; min-height: 100vh;">
+
+    
+    <aside th:replace="~{fragments/seller-sidebar :: sidebar(activePage='dashboard')}"></aside>
+
+    <main class="main-content"
+        style="flex: 1; padding: 2rem 3rem; display: flex; flex-direction: column; overflow-y: auto;">
+
+        <div class="header-top"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+            <h1 style="font-size: 1.8rem; font-weight: 500; margin: 0;">Seller Performance</h1>
+            <div style="color: #64748b; font-size: 0.9rem;">Welcome back, <span
+                    th:text="${currentUser.name}">Seller</span></div>
+        </div>
+
+        
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            <div style="background-color: #ffffff; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+                <h3 style="color: #64748b; font-size: 0.875rem; margin: 0 0 0.5rem 0; font-weight: 500;">Total Revenue
+                </h3>
+                <div style="font-size: 2rem; font-weight: 600; color: #10b981;"
+                    th:text="${'LKR ' + (totalRevenue != null ? totalRevenue : 0.0)}">LKR 0.0</div>
+            </div>
+            <div style="background-color: #ffffff; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+                <h3 style="color: #64748b; font-size: 0.875rem; margin: 0 0 0.5rem 0; font-weight: 500;">Units Sold</h3>
+                <div style="font-size: 2rem; font-weight: 600; color: #0f172a;"
+                    th:text="${totalUnitsSold != null ? totalUnitsSold : 0}">0</div>
+            </div>
+            <div style="background-color: #ffffff; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #ef4444;">
+                <h3 style="color: #ef4444; font-size: 0.875rem; margin: 0 0 0.5rem 0; font-weight: 500;">Low Stock Items
+                </h3>
+                <div style="font-size: 2rem; font-weight: 600; color: #0f172a;"
+                    th:text="${lowStockAlerts != null ? lowStockAlerts.size() : 0}">0</div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+
+            
+            <div style="flex: 2; min-width: 300px;">
+                <h2 style="font-size: 1.25rem; font-weight: 500; margin: 0 0 1rem 0; color: #0f172a;">Recent Purchases
+                </h2>
+                <div
+                    style="background-color: #ffffff; border-radius: 0.5rem; border: 1px solid #e2e8f0; overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th
+                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                                    Time</th>
+                                <th
+                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                                    Product</th>
+                                <th
+                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                                    Variant</th>
+                                <th
+                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase;">
+                                    Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="alert : ${recentOrders}">
+                                <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-size: 0.85rem;"
+                                    th:text="${#temporals.format(alert.order.createdAt, 'dd MMM, HH:mm')}">Time</td>
+                                <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-size: 0.85rem;"
+                                    th:text="${alert.productVariant.product.title}">Product</td>
+                                <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #64748b; font-size: 0.85rem;"
+                                    th:text="${alert.productVariant.size + ' | ' + alert.productVariant.color}">Size |
+                                    Color</td>
+                                <td style="padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #10b981; font-weight: 500; font-size: 0.85rem;"
+                                    th:text="${'+ LKR ' + (alert.priceAtTimeOfPurchase * alert.quantity)}">Amount</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(recentOrders)}">
+                                <td colspan="4"
+                                    style="padding: 2rem; text-align: center; color: #64748b; font-size: 0.85rem;">No
+                                    recent orders.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            
+            <div style="flex: 1; min-width: 250px;">
+                <h2 style="font-size: 1.25rem; font-weight: 500; margin: 0 0 1rem 0; color: #ef4444;">Restock Required
+                </h2>
+                <div
+                    style="background-color: #ffffff; border-radius: 0.5rem; border: 1px solid #ef4444; overflow: hidden;">
+                    <div th:each="alert : ${lowStockAlerts}"
+                        style="padding: 1rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="color: #0f172a; font-size: 0.9rem; margin-bottom: 0.2rem;"
+                                th:text="${alert.product.title}">Product</div>
+                            <div style="color: #64748b; font-size: 0.75rem;"
+                                th:text="${alert.size + ' | ' + alert.color}">Variant</div>
+                        </div>
+                        <div style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem; font-weight: 600;"
+                            th:text="${alert.stockQuantity + ' left'}">0 left</div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(lowStockAlerts)}"
+                        style="padding: 2rem; text-align: center; color: #64748b; font-size: 0.85rem;">
+                        Inventory levels are healthy.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+</body>
+
+</html>

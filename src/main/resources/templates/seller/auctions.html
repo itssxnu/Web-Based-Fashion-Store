@@ -1,0 +1,395 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard - Auctions | QC.</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --seller-bg: #f8fafc;
+            --seller-card: #ffffff;
+            --seller-text: #0f172a;
+        }
+
+        body {
+            background-color: var(--seller-bg);
+            color: var(--seller-text);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--seller-card);
+            padding: 2rem 0;
+            flex-shrink: 0;
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 2rem 3rem;
+            overflow-y: auto;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: #0f172a;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: #0f172a;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .card {
+            background: var(--seller-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--seller-text);
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: middle;
+        }
+
+        .table th {
+            color: #64748b;
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .status-closed {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--seller-card);
+            padding: 2rem;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #64748b;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background: #f1f5f9;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #0f172a;
+            border-radius: 6px;
+        }
+
+        .flex-end {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        
+        <aside th:replace="~{fragments/seller-sidebar :: sidebar(activePage='auctions')}"></aside>
+
+        
+        <main class="main-content">
+            <div class="header-actions">
+                <h1 style="font-size: 1.5rem; font-weight: 600; margin: 0;">Auction Management</h1>
+                <button class="btn-primary" onclick="openCreateModal()">+ Start New Auction</button>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <div class="card">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Pieces Lot</th>
+                            <th>Status</th>
+                            <th>Starting Price (LKR)</th>
+                            <th>Expected Price (LKR)</th>
+                            <th>Current Top Bid</th>
+                            <th>Winner</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="auction : ${auctions}">
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <img th:if="${auction.product.mainImageUrl}"
+                                        th:src="${auction.product.mainImageUrl}"
+                                        style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">
+                                    <span th:text="${auction.product.title}" style="font-weight: 500;"></span>
+                                </div>
+                            </td>
+                            <td th:text="${auction.clothingPieces}"></td>
+                            <td>
+                                <span
+                                    th:class="${auction.active ? 'status-badge status-active' : 'status-badge status-closed'}"
+                                    th:text="${auction.active ? 'LIVE' : 'CLOSED'}"></span>
+                            </td>
+                            <td th:text="${#numbers.formatDecimal(auction.startingPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+                            <td th:text="${#numbers.formatDecimal(auction.expectedPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+                            <td style="color: #10b981; font-weight: 600;"
+                                th:text="${#numbers.formatDecimal(auction.currentHighestBid, 1, 'COMMA', 2, 'POINT')}">
+                            </td>
+                            <td th:text="${auction.winner != null ? auction.winner.name : '-'}"></td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    
+                                    <button th:if="${auction.active && auction.currentHighestBidder == null}"
+                                        class="btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1rem;"
+                                        th:onclick="'openEditModal(' + ${auction.id} + ', ' + ${auction.startingPrice} + ', ' + ${auction.expectedPrice} + ', ' + ${auction.clothingPieces} + ')'">Edit</button>
+
+                                    <form th:if="${auction.active}"
+                                        th:action="@{/seller/auctions/{id}/stop(id=${auction.id})}" method="post"
+                                        onsubmit="return confirm('Manually stop bidding? This limits the highest bidder to the current amount.')">
+                                        <button type="submit" class="btn-warning">Stop Bidding</button>
+                                    </form>
+
+                                    <form th:action="@{/seller/auctions/{id}/delete(id=${auction.id})}" method="post"
+                                        onsubmit="return confirm('Permanently delete this auction trace?')">
+                                        <button type="submit" class="btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(auctions)}">
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: #64748b;">
+                                You don't have any active biddings running. Click 'Start New Auction' to get started!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-top: 0; margin-bottom: 1.5rem;">Start New Auction</h2>
+            <form th:action="@{/seller/auctions/create}" method="post">
+                <div class="form-group">
+                    <label>Select Product</label>
+                    <select name="productId" class="form-control" required>
+                        <option value="" disabled selected>-- Choose Product --</option>
+                        <option th:each="product : ${products}" th:value="${product.id}" th:text="${product.title}">
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Starting Price (LKR)</label>
+                    <input type="number" step="0.01" name="startingPrice" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Clothing Pieces Included</label>
+                    <input type="number" name="clothingPieces" min="1" class="form-control" placeholder="Qty per bid..."
+                        required>
+                </div>
+                <div class="form-group">
+                    <label>Expected Price (LKR) [Auto-Close Trigger]</label>
+                    <input type="number" step="0.01" name="expectedPrice" class="form-control" required>
+                </div>
+                <div class="flex-end">
+                    <button type="button" class="btn-danger"
+                        style="background: transparent; color: #ef4444; border: 1px solid #ef4444;"
+                        onclick="closeModals()">Cancel</button>
+                    <button type="submit" class="btn-primary">Launch Auction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-top: 0; margin-bottom: 1.5rem;">Edit Auction Bounds</h2>
+            <form id="editForm" method="post">
+                <div class="form-group">
+                    <label>Starting Price (LKR)</label>
+                    <input type="number" step="0.01" id="editStarting" name="startingPrice" class="form-control"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label>Clothing Pieces Included</label>
+                    <input type="number" id="editPieces" name="clothingPieces" min="1" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Expected Price (LKR)</label>
+                    <input type="number" step="0.01" id="editExpected" name="expectedPrice" class="form-control"
+                        required>
+                </div>
+                <div class="flex-end">
+                    <button type="button" class="btn-danger"
+                        style="background: transparent; color: #ef4444; border: 1px solid #ef4444;"
+                        onclick="closeModals()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openCreateModal() {
+            document.getElementById('createModal').classList.add('show');
+        }
+
+        function openEditModal(auctionId, currentStart, currentExpect, currentPieces) {
+            document.getElementById('editForm').action = '/seller/auctions/' + auctionId + '/edit';
+            document.getElementById('editStarting').value = currentStart;
+            document.getElementById('editExpected').value = currentExpect;
+            document.getElementById('editPieces').value = currentPieces;
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        function closeModals() {
+            document.getElementById('createModal').classList.remove('show');
+            document.getElementById('editModal').classList.remove('show');
+        }
+
+        // Close on background click
+        window.onclick = function (event) {
+            if (event.target.classList.contains('modal')) {
+                closeModals();
+            }
+        }
+    </script>
+
+</body>
+
+</html>
