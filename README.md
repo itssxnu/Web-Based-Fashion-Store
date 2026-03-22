@@ -14,9 +14,9 @@
 ![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
 
 <!-- ↓ Live GitHub stats — replace YOUR_USERNAME/YOUR_REPO once you push to GitHub ↓ -->
-![Last Commit](https://img.shields.io/github/last-commit/itssxnu/Web-Based-Fashion-Store.git?style=flat-square\&label=Last%20Commit)
-![Languages Count](https://img.shields.io/github/languages/count/YOUR_USERNAME/YOUR_REPO?style=flat-square\&label=Languages)
-![Top Language](https://img.shields.io/github/languages/top/YOUR_USERNAME/YOUR_REPO?style=flat-square)
+![Last Commit](https://img.shields.io/github/last-commit/itssxnu/Web-Based-Fashion-Store?style=flat-square\&label=Last%20Commit)
+![Languages Count](https://img.shields.io/github/languages/count/itssxnu/Web-Based-Fashion-Store?style=flat-square\&label=Languages)
+![Top Language](https://img.shields.io/github/languages/top/itssxnu/Web-Based-Fashion-Store?style=flat-square)
 
 </div>
 
