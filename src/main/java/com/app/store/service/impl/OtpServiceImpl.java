@@ -27,12 +27,12 @@ public class OtpServiceImpl implements OtpService {
     private static final int OTP_VALIDITY_MINUTES = 5;
 
     @Override
-    public Otp generateAndSendOtp(String phoneNumber) {
+    public Otp generateAndSendOtp(String email) {
         
         String code = String.format("%06d", new Random().nextInt(999999));
 
         Otp otp = Otp.builder()
-                .phone(phoneNumber)
+                .email(email)
                 .code(code)
                 .expiresAt(LocalDateTime.now().plusMinutes(OTP_VALIDITY_MINUTES))
                 .verified(false)
@@ -41,22 +41,22 @@ public class OtpServiceImpl implements OtpService {
         otpRepository.save(otp);
 
         
-        Optional<User> userOpt = userRepository.findByPhone(phoneNumber);
+        Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isPresent()) {
             emailService.sendOtpEmail(userOpt.get().getEmail(), code);
         } else {
-            log.warn("Cannot send OTP email. No user found matched to phone: {}", phoneNumber);
+            log.warn("Cannot send OTP email. No user found matched to email: {}", email);
         }
 
         return otp;
     }
 
     @Override
-    public Otp generateAndSendCheckoutOtp(String phoneNumber) {
+    public Otp generateAndSendCheckoutOtp(String email) {
         String code = String.format("%06d", new Random().nextInt(999999));
 
         Otp otp = Otp.builder()
-                .phone(phoneNumber)
+                .email(email)
                 .code(code)
                 .expiresAt(LocalDateTime.now().plusMinutes(OTP_VALIDITY_MINUTES))
                 .verified(false)
@@ -64,19 +64,19 @@ public class OtpServiceImpl implements OtpService {
 
         otpRepository.save(otp);
 
-        Optional<User> userOpt = userRepository.findByPhone(phoneNumber);
+        Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isPresent()) {
             emailService.sendCheckoutOtpEmail(userOpt.get().getEmail(), code);
         } else {
-            log.warn("Cannot send Checkout OTP email. No user found matched to phone: {}", phoneNumber);
+            log.warn("Cannot send Checkout OTP email. No user found matched to email: {}", email);
         }
 
         return otp;
     }
 
     @Override
-    public boolean verifyOtp(String phoneNumber, String code) {
-        Optional<Otp> otpOptional = otpRepository.findTopByPhoneOrderByExpiresAtDesc(phoneNumber);
+    public boolean verifyOtp(String email, String code) {
+        Optional<Otp> otpOptional = otpRepository.findTopByEmailOrderByExpiresAtDesc(email);
 
         if (otpOptional.isPresent()) {
             Otp otp = otpOptional.get();

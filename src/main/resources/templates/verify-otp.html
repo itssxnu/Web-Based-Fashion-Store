@@ -10,7 +10,7 @@
             <div class="container" style="max-width: 400px; margin: 0 auto;">
                 <h1 style="font-weight: 300; margin-bottom: 20px;">Verify Your Mobile</h1>
                 <p style="color: var(--text-light); margin-bottom: 30px; font-size: 0.95rem;">
-                    We've sent a 6-digit code to your phone.
+                    We've sent a 6-digit code to your email.
                 </p>
 
                 <div th:if="${error}" style="color: red; margin-bottom: 20px; font-size: 0.9rem;" th:text="${error}">
@@ -18,7 +18,7 @@
 
                 <form th:action="@{/verify-otp}" th:object="${otpDto}" method="post"
                     style="display: flex; flex-direction: column; gap: 20px;">
-                    <input type="hidden" th:field="*{phone}" />
+                    <input type="hidden" th:field="*{email}" />
 
                     <div>
                         <input type="text" th:field="*{code}" placeholder="Enter 6-digit OTP" required maxlength="6"

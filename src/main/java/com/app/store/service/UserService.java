@@ -6,7 +6,7 @@ import com.app.store.entity.User;
 public interface UserService {
     User registerUser(UserRegistrationDto registrationDto);
 
-    boolean verifyUserOtp(String phone, String code);
+    boolean verifyUserOtp(String email, String code);
 
     User findByPhone(String phone);
 

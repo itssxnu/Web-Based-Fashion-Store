@@ -35,7 +35,7 @@ public class AuthController {
 
         try {
             userService.registerUser(registrationDto);
-            return "redirect:/verify-otp?phone=" + registrationDto.getPhone();
+            return "redirect:/verify-otp?email=" + registrationDto.getEmail();
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "register";
@@ -43,13 +43,13 @@ public class AuthController {
     }
 
     @GetMapping("/verify-otp")
-    public String showOtpVerificationForm(@RequestParam(value = "phone", required = false) String phone, Model model) {
-        if (phone == null || phone.trim().isEmpty()) {
+    public String showOtpVerificationForm(@RequestParam(value = "email", required = false) String email, Model model) {
+        if (email == null || email.trim().isEmpty()) {
             return "redirect:/register";
         }
 
         OtpVerificationDto dto = new OtpVerificationDto();
-        dto.setPhone(phone);
+        dto.setEmail(email);
         model.addAttribute("otpDto", dto);
         return "verify-otp";
     }
@@ -62,7 +62,7 @@ public class AuthController {
             return "verify-otp";
         }
 
-        boolean verified = userService.verifyUserOtp(dto.getPhone(), dto.getCode());
+        boolean verified = userService.verifyUserOtp(dto.getEmail(), dto.getCode());
 
         if (verified) {
             return "redirect:/login?verified=true";

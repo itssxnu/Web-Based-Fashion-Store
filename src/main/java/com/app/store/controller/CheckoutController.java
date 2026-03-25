@@ -42,7 +42,7 @@ public class CheckoutController {
 
         Boolean isVerified = (Boolean) session.getAttribute("checkout_verified");
         if (isVerified == null || !isVerified) {
-            otpService.generateAndSendCheckoutOtp(user.getPhone());
+            otpService.generateAndSendCheckoutOtp(user.getEmail());
             return "redirect:/checkout/verify-otp";
         }
 
@@ -76,7 +76,7 @@ public class CheckoutController {
         User user = getAuthenticatedUser(principal);
         if (user == null) return "redirect:/login";
 
-        boolean verified = otpService.verifyOtp(user.getPhone(), code);
+        boolean verified = otpService.verifyOtp(user.getEmail(), code);
         if (verified) {
             session.setAttribute("checkout_verified", true);
             return "redirect:/checkout";

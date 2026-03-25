@@ -3,9 +3,9 @@ package com.app.store.service;
 import com.app.store.entity.Otp;
 
 public interface OtpService {
-    Otp generateAndSendOtp(String phoneNumber);
+    Otp generateAndSendOtp(String email);
     
-    Otp generateAndSendCheckoutOtp(String phoneNumber);
+    Otp generateAndSendCheckoutOtp(String email);
 
-    boolean verifyOtp(String phoneNumber, String code);
+    boolean verifyOtp(String email, String code);
 }

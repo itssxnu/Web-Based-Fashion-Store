@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class OtpVerificationDto {
-    @NotBlank(message = "Phone number is required")
-    private String phone;
+    @NotBlank(message = "Email is required")
+    private String email;
 
     @NotBlank(message = "OTP code is required")
     private String code;

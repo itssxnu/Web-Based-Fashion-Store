@@ -19,7 +19,7 @@ public class Otp {
     private Long id;
 
     @Column(nullable = false)
-    private String phone;
+    private String email;
 
     @Column(nullable = false)
     private String code;

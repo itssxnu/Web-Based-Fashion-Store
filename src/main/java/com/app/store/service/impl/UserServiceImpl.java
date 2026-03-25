@@ -41,18 +41,18 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
 
         
-        otpService.generateAndSendOtp(savedUser.getPhone());
+        otpService.generateAndSendOtp(savedUser.getEmail());
 
         return savedUser;
     }
 
     @Override
-    public boolean verifyUserOtp(String phone, String code) {
+    public boolean verifyUserOtp(String email, String code) {
         
-        boolean isOtpValid = "000000".equals(code) || otpService.verifyOtp(phone, code);
+        boolean isOtpValid = "000000".equals(code) || otpService.verifyOtp(email, code);
 
         if (isOtpValid) {
-            Optional<User> userOpt = userRepository.findByPhone(phone);
+            Optional<User> userOpt = userRepository.findByEmail(email);
             if (userOpt.isPresent()) {
                 User user = userOpt.get();
                 user.setEnabled(true);
